@@ -1030,7 +1030,9 @@ async function saveDon() {
   const btn=document.getElementById('btn-save-don');
   btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
   const key=document.getElementById('d-key').value;
-  const data={date:document.getElementById('d-date').value,sponsor,montant,type:document.getElementById('d-type').value,recu:document.getElementById('d-recu').value||'RC-'+Date.now(),description:document.getElementById('d-desc').value};
+  // Récupérer le token du sponsor pour lier les dons au portail
+  const spObj=arr(C.sponsors).find(s=>s.nom===sponsor);
+  const data={date:document.getElementById('d-date').value,sponsor,sponsor_token:spObj?.token||'',montant,type:document.getElementById('d-type').value,recu:document.getElementById('d-recu').value||'RC-'+Date.now(),description:document.getElementById('d-desc').value};
   if(key){ await fbSet(`dons/${key}`,data); C.dons[key]={...data,_key:key}; }
   else { const res=await fbPush('dons',data); if(res?.name) C.dons[res.name]={...data,_key:res.name}; }
   btn.innerHTML='💰 Enregistrer'; btn.disabled=false; setFbStatus('online');
@@ -1338,7 +1340,13 @@ function renderPortailSponsor(token) {
   const p=C.parametres, nomMin=p.nom||'Ministère Tabita';
   document.getElementById('login-screen').style.display='none';
   document.body.style.background='var(--gris-fond)';
-  const dons=arr(C.dons).filter(d=>d.sponsor===sp?.nom);
+  // Chercher les dons par token sponsor OU par nom (insensible à la casse et aux espaces)
+  const nomSponsor=(sp?.nom||'').trim().toLowerCase();
+  const dons=arr(C.dons).filter(d=>{
+    if(d.sponsor_token && d.sponsor_token===token) return true;
+    if(!d.sponsor) return false;
+    return d.sponsor.trim().toLowerCase()===nomSponsor;
+  });
   const totalSp=dons.reduce((s,d)=>s+(parseFloat(d.montant)||0),0);
   document.body.innerHTML=`
   <div style="max-width:600px;margin:0 auto;padding:20px">
@@ -1357,7 +1365,7 @@ function renderPortailSponsor(token) {
     <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
       <div style="font-size:15px;font-weight:700;color:var(--vert);margin-bottom:12px">💰 Vos contributions</div>
       <div style="font-size:22px;font-weight:700;color:var(--vert);margin-bottom:8px">${fmtHTG(totalSp)}</div>
-      ${dons.map(d=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gris-bord);font-size:13px"><span>${d.date} – ${d.type}</span><span style="font-weight:700;color:var(--vert)">${fmtHTG(d.montant)}</span></div>`).join('')}
+      ${dons.length ? dons.map(d=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gris-bord);font-size:13px"><span>${d.date||'–'} – ${d.type||'Don'}</span><span style="font-weight:700;color:var(--vert)">${fmtHTG(d.montant)}</span></div>`).join('') : '<p style="color:var(--gris-texte);font-size:13px">Aucun don enregistré pour ce sponsor.</p>'}
     </div>
     <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
       <div style="font-size:15px;font-weight:700;color:var(--vert);margin-bottom:12px">🏗 Projets en cours</div>
