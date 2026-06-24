@@ -5,160 +5,154 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>SGMT – Ministère Tabita</title>
 <style>
-  :root{--vert:#1B5E20;--vert-clair:#2E7D32;--vert-light:#E8F5E9;--or:#F9A825;--or-light:#FFF8E1;--rouge:#C62828;--rouge-light:#FFEBEE;--bleu:#0277BD;--gris-fond:#F5F5F5;--gris-bord:#E0E0E0;--gris-texte:#616161;--blanc:#FFFFFF;--noir:#212121;--sidebar-w:260px;--header-h:60px}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--gris-fond);color:var(--noir);font-size:14px}
-  #login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(160deg,var(--vert) 0%,#4CAF50 100%);padding:20px}
-  .login-box{background:var(--blanc);border-radius:16px;padding:40px 32px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.2)}
-  .login-logo{text-align:center;margin-bottom:28px}
-  .login-logo .cross{font-size:48px;color:var(--vert)}
-  .login-logo h1{font-size:22px;font-weight:700;color:var(--vert);margin-top:6px}
-  .login-logo p{font-size:12px;color:var(--gris-texte);margin-top:4px;font-style:italic}
-  .form-group{margin-bottom:16px}
-  .form-group label{display:block;font-size:12px;font-weight:600;color:var(--gris-texte);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-  .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1.5px solid var(--gris-bord);border-radius:8px;font-size:14px;outline:none;transition:border .2s}
-  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--vert-clair)}
-  .form-group textarea{resize:vertical;min-height:80px}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
-  .btn-primary{background:var(--vert-clair);color:var(--blanc)}
-  .btn-primary:hover{background:var(--vert)}
-  .btn-or{background:var(--or);color:var(--noir)}
-  .btn-danger{background:var(--rouge);color:var(--blanc)}
-  .btn-ghost{background:transparent;color:var(--vert-clair);border:1.5px solid var(--vert-clair)}
-  .btn-ghost:hover{background:var(--vert-light)}
-  .btn-full{width:100%;justify-content:center;padding:12px}
-  .btn-sm{padding:6px 14px;font-size:12px}
-  #login-error{color:var(--rouge);font-size:13px;text-align:center;margin-top:10px;display:none}
-  .login-forgot{text-align:center;margin-top:16px;font-size:12px;color:var(--gris-texte)}
-  .login-forgot a{color:var(--vert-clair);text-decoration:none}
-  #app{display:none;flex-direction:row;height:100vh;overflow:hidden}
-  #sidebar{width:var(--sidebar-w);background:var(--vert);display:flex;flex-direction:column;height:100vh;overflow-y:auto;flex-shrink:0;transition:transform .3s}
-  .sidebar-brand{padding:20px 16px 12px;border-bottom:1px solid rgba(255,255,255,.15)}
-  .sidebar-brand .brand-cross{font-size:28px;color:var(--or)}
-  .sidebar-brand h2{font-size:14px;font-weight:700;color:var(--blanc);margin-top:4px}
-  .sidebar-brand p{font-size:11px;color:rgba(255,255,255,.6);font-style:italic}
-  .sidebar-user{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:center;gap:10px}
-  .avatar{width:36px;height:36px;border-radius:50%;background:var(--or);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--vert);font-size:14px;flex-shrink:0}
-  .sidebar-user-info{flex:1;min-width:0}
-  .sidebar-user-info .u-name{font-size:13px;font-weight:600;color:var(--blanc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .sidebar-user-info .u-role{font-size:11px;color:rgba(255,255,255,.6)}
-  nav{flex:1;padding:8px 0}
-  .nav-group{margin-bottom:4px}
-  .nav-group-label{padding:8px 16px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:rgba(255,255,255,.8);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all .15s}
-  .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.12);color:var(--blanc);border-left-color:var(--or)}
-  .nav-item .nav-icon{font-size:17px;width:22px;text-align:center}
-  .nav-item .nbadge{margin-left:auto;background:var(--rouge);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
-  .sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.15)}
-  .sidebar-footer .nav-item{padding:8px 0;border:none}
-  .sidebar-footer .nav-item:hover{background:none;color:var(--or)}
-  #main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-  #topbar{height:var(--header-h);background:var(--blanc);border-bottom:1px solid var(--gris-bord);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
-  #menu-toggle{display:none;font-size:22px;cursor:pointer;color:var(--vert);background:none;border:none}
-  #page-title{font-size:16px;font-weight:700;color:var(--vert);flex:1}
-  .topbar-actions{display:flex;align-items:center;gap:10px}
-  .notif-btn{position:relative;background:none;border:none;font-size:20px;cursor:pointer;color:var(--gris-texte)}
-  .notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:var(--rouge);border-radius:50%}
-  #content{flex:1;overflow-y:auto;padding:20px}
-  .card{background:var(--blanc);border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);padding:20px;margin-bottom:16px}
-  .card-title{font-size:15px;font-weight:700;color:var(--vert);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--vert-light);display:flex;align-items:center;gap:8px}
-  .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:16px}
-  .stat-card{background:var(--blanc);border-radius:12px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.08);border-left:4px solid var(--vert-clair);display:flex;flex-direction:column;gap:4px}
-  .stat-card.or{border-left-color:var(--or)}
-  .stat-card.rouge{border-left-color:var(--rouge)}
-  .stat-card.bleu{border-left-color:var(--bleu)}
-  .stat-label{font-size:11px;font-weight:600;color:var(--gris-texte);text-transform:uppercase;letter-spacing:.4px}
-  .stat-val{font-size:24px;font-weight:700;color:var(--noir)}
-  .stat-sub{font-size:11px;color:var(--gris-texte)}
-  .alert{padding:12px 16px;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;gap:10px;font-size:13px}
-  .alert-warning{background:var(--or-light);border:1px solid #FFE082;color:#5D4037}
-  .alert-danger{background:var(--rouge-light);border:1px solid #EF9A9A;color:var(--rouge)}
-  .alert-success{background:var(--vert-light);border:1px solid #A5D6A7;color:var(--vert)}
-  .alert-info{background:#E3F2FD;border:1px solid #90CAF9;color:#0D47A1}
-  .table-wrapper{overflow-x:auto}
-  table{width:100%;border-collapse:collapse}
-  th{background:var(--vert-light);color:var(--vert);font-size:12px;font-weight:700;padding:10px 12px;text-align:left;text-transform:uppercase;letter-spacing:.5px}
-  td{padding:10px 12px;border-bottom:1px solid var(--gris-bord);font-size:13px;vertical-align:middle}
-  tr:hover td{background:#FAFAFA}
-  .actions-cell{display:flex;gap:6px;flex-wrap:wrap}
-  .badge-status{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-  .badge-critique{background:#FFCDD2;color:#B71C1C}
-  .badge-eleve{background:#FFE0B2;color:#E65100}
-  .badge-moyen{background:#FFF9C4;color:#827717}
-  .badge-faible{background:#C8E6C9;color:#1B5E20}
-  .badge-malade{background:#BBDEFB;color:#0D47A1}
-  .badge-actif{background:#C8E6C9;color:#1B5E20}
-  .badge-inactif{background:#F5F5F5;color:#9E9E9E}
-  .toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-  .toolbar input[type=text]{flex:1;min-width:180px;padding:9px 14px;border:1.5px solid var(--gris-bord);border-radius:8px;font-size:13px;outline:none}
-  .toolbar input[type=text]:focus{border-color:var(--vert-clair)}
-  .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--vert-light);border-radius:10px;padding:4px;flex-wrap:wrap}
-  .tab-btn{flex:1;padding:8px 12px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--gris-texte);transition:all .2s;text-align:center;min-width:80px}
-  .tab-btn.active{background:var(--vert-clair);color:var(--blanc)}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media(max-width:600px){.form-grid{grid-template-columns:1fr}}
-  .form-full{grid-column:1/-1}
-  .form-section-title{font-size:12px;font-weight:700;color:var(--vert-clair);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--vert-light);grid-column:1/-1}
-  .checkbox-group{display:flex;flex-wrap:wrap;gap:10px}
-  .checkbox-group label{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
-  .radio-group{display:flex;gap:10px;flex-wrap:wrap}
-  .radio-group label{display:flex;align-items:center;gap:6px;font-size:13px;padding:7px 14px;border:1.5px solid var(--gris-bord);border-radius:8px;cursor:pointer;transition:all .2s}
-  .radio-group label:has(input:checked){border-color:var(--vert-clair);background:var(--vert-light)}
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;padding:16px;overflow-y:auto}
-  .modal-overlay.open{display:flex;align-items:flex-start;justify-content:center;padding-top:40px}
-  .modal{background:var(--blanc);border-radius:14px;width:100%;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-  .modal-header{padding:18px 20px;border-bottom:1px solid var(--gris-bord);display:flex;align-items:center;justify-content:space-between}
-  .modal-header h3{font-size:16px;font-weight:700;color:var(--vert)}
-  .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--gris-texte);line-height:1}
-  .modal-body{padding:20px}
-  .modal-footer{padding:14px 20px;border-top:1px solid var(--gris-bord);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
-  .finance-bar{height:14px;border-radius:7px;background:var(--gris-bord);overflow:hidden;margin:6px 0}
-  .finance-fill{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--vert-clair),var(--or))}
-  .inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-  .inv-card{background:var(--blanc);border:1.5px solid var(--gris-bord);border-radius:10px;padding:14px;text-align:center}
-  .inv-card .inv-icon{font-size:32px;margin-bottom:8px}
-  .inv-card .inv-name{font-size:12px;font-weight:600;color:var(--gris-texte);margin-bottom:6px}
-  .inv-card .inv-stock{font-size:22px;font-weight:700;color:var(--vert)}
-  .inv-card .inv-alert{color:var(--rouge);font-size:11px;margin-top:4px}
-  .inv-card.low{border-color:#EF9A9A}
-  .visite-card{border:1px solid var(--gris-bord);border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--vert-clair)}
-  .visite-card .v-header{display:flex;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
-  .visite-card .v-date{font-size:13px;font-weight:700;color:var(--vert)}
-  .v-activites{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
-  .v-tag{background:var(--vert-light);color:var(--vert);font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600}
-  .projet-card{border:1px solid var(--gris-bord);border-radius:10px;padding:16px;margin-bottom:10px}
-  .projet-card .p-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px;flex-wrap:wrap}
-  .projet-card .p-name{font-size:15px;font-weight:700;color:var(--noir)}
-  .projet-montants{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0;text-align:center}
-  .pm-label{font-size:10px;color:var(--gris-texte);font-weight:600;text-transform:uppercase}
-  .pm-val{font-size:16px;font-weight:700;color:var(--vert)}
-  .rapport-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-  .rapport-btn{background:var(--blanc);border:1.5px solid var(--gris-bord);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s}
-  .rapport-btn:hover{border-color:var(--vert-clair);background:var(--vert-light)}
-  .rapport-btn .r-icon{font-size:32px;margin-bottom:8px}
-  .rapport-btn .r-name{font-size:13px;font-weight:600;color:var(--vert)}
-  .rapport-btn .r-desc{font-size:11px;color:var(--gris-texte);margin-top:4px}
-  .beneficiaire-header{display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap}
-  .beneficiaire-avatar{width:80px;height:80px;border-radius:12px;background:var(--vert-light);border:3px solid var(--vert-clair);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
-  .beneficiaire-info h2{font-size:20px;font-weight:700;color:var(--vert)}
-  .beneficiaire-info .b-code{font-size:12px;color:var(--gris-texte);margin-bottom:6px}
-  .beneficiaire-info .b-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-  .fb-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600}
-  .fb-online{background:#E8F5E9;color:var(--vert)}
-  .fb-offline{background:#F5F5F5;color:#9E9E9E}
-  .fb-saving{background:#FFF8E1;color:#F57F17}
-  @media(max-width:768px){
-    #sidebar{position:fixed;left:0;top:0;z-index:900;transform:translateX(-100%)}
-    #sidebar.open{transform:translateX(0)}
-    #menu-toggle{display:block}
-    #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:800}
-    #overlay.open{display:block}
-    .stats-grid{grid-template-columns:1fr 1fr}
-  }
-  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--vert);color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;display:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
-  .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-row td{text-align:center;padding:30px;color:var(--gris-texte)}
+:root{--vert:#1B5E20;--vert-clair:#2E7D32;--vert-light:#E8F5E9;--or:#F9A825;--or-light:#FFF8E1;--rouge:#C62828;--rouge-light:#FFEBEE;--bleu:#0277BD;--gris-fond:#F5F5F5;--gris-bord:#E0E0E0;--gris-texte:#616161;--blanc:#FFFFFF;--noir:#212121;--sidebar-w:260px;--header-h:60px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--gris-fond);color:var(--noir);font-size:14px}
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(160deg,var(--vert) 0%,#4CAF50 100%);padding:20px}
+.login-box{background:var(--blanc);border-radius:16px;padding:40px 32px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.2)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .cross{font-size:48px;color:var(--vert)}
+.login-logo h1{font-size:22px;font-weight:700;color:var(--vert);margin-top:6px}
+.login-logo p{font-size:12px;color:var(--gris-texte);margin-top:4px;font-style:italic}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--gris-texte);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1.5px solid var(--gris-bord);border-radius:8px;font-size:14px;outline:none;transition:border .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--vert-clair)}
+.form-group input:disabled{background:#f9f9f9;color:var(--gris-texte)}
+.form-group textarea{resize:vertical;min-height:80px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--vert-clair);color:var(--blanc)}
+.btn-primary:hover{background:var(--vert)}
+.btn-or{background:var(--or);color:var(--noir)}
+.btn-danger{background:var(--rouge);color:var(--blanc)}
+.btn-ghost{background:transparent;color:var(--vert-clair);border:1.5px solid var(--vert-clair)}
+.btn-ghost:hover{background:var(--vert-light)}
+.btn-bleu{background:var(--bleu);color:var(--blanc)}
+.btn-full{width:100%;justify-content:center;padding:12px}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+#login-error{color:var(--rouge);font-size:13px;text-align:center;margin-top:10px;display:none}
+#app{display:none;flex-direction:row;height:100vh;overflow:hidden}
+#sidebar{width:var(--sidebar-w);background:var(--vert);display:flex;flex-direction:column;height:100vh;overflow-y:auto;flex-shrink:0;transition:transform .3s}
+.sidebar-brand{padding:20px 16px 12px;border-bottom:1px solid rgba(255,255,255,.15)}
+.sidebar-brand .brand-cross{font-size:28px;color:var(--or)}
+.sidebar-brand h2{font-size:14px;font-weight:700;color:var(--blanc);margin-top:4px}
+.sidebar-brand p{font-size:11px;color:rgba(255,255,255,.6);font-style:italic}
+.sidebar-user{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--or);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--vert);font-size:14px;flex-shrink:0}
+.sidebar-user-info{flex:1;min-width:0}
+.u-name{font-size:13px;font-weight:600;color:var(--blanc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.u-role{font-size:11px;color:rgba(255,255,255,.6)}
+nav{flex:1;padding:8px 0}
+.nav-group{margin-bottom:4px}
+.nav-group-label{padding:8px 16px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:rgba(255,255,255,.8);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all .15s}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.12);color:var(--blanc);border-left-color:var(--or)}
+.nav-icon{font-size:17px;width:22px;text-align:center}
+.nbadge{margin-left:auto;background:var(--rouge);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.15)}
+.sidebar-footer .nav-item{padding:8px 0;border:none}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#topbar{height:var(--header-h);background:var(--blanc);border-bottom:1px solid var(--gris-bord);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+#menu-toggle{display:none;font-size:22px;cursor:pointer;color:var(--vert);background:none;border:none}
+#page-title{font-size:16px;font-weight:700;color:var(--vert);flex:1}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.notif-btn{position:relative;background:none;border:none;font-size:20px;cursor:pointer;color:var(--gris-texte)}
+.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:var(--rouge);border-radius:50%;display:none}
+#content{flex:1;overflow-y:auto;padding:20px}
+.card{background:var(--blanc);border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);padding:20px;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:700;color:var(--vert);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--vert-light);display:flex;align-items:center;gap:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.stat-card{background:var(--blanc);border-radius:12px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.08);border-left:4px solid var(--vert-clair);display:flex;flex-direction:column;gap:4px}
+.stat-card.or{border-left-color:var(--or)}
+.stat-card.rouge{border-left-color:var(--rouge)}
+.stat-card.bleu{border-left-color:var(--bleu)}
+.stat-label{font-size:11px;font-weight:600;color:var(--gris-texte);text-transform:uppercase;letter-spacing:.4px}
+.stat-val{font-size:24px;font-weight:700;color:var(--noir)}
+.alert{padding:12px 16px;border-radius:8px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;font-size:13px}
+.alert-warning{background:var(--or-light);border:1px solid #FFE082;color:#5D4037}
+.alert-danger{background:var(--rouge-light);border:1px solid #EF9A9A;color:var(--rouge)}
+.alert-success{background:var(--vert-light);border:1px solid #A5D6A7;color:var(--vert)}
+.alert-info{background:#E3F2FD;border:1px solid #90CAF9;color:#0D47A1}
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:var(--vert-light);color:var(--vert);font-size:12px;font-weight:700;padding:10px 12px;text-align:left;text-transform:uppercase;letter-spacing:.5px}
+td{padding:10px 12px;border-bottom:1px solid var(--gris-bord);font-size:13px;vertical-align:middle}
+tr:hover td{background:#FAFAFA}
+.actions-cell{display:flex;gap:6px;flex-wrap:wrap}
+.badge-status{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-critique{background:#FFCDD2;color:#B71C1C}
+.badge-eleve{background:#FFE0B2;color:#E65100}
+.badge-moyen{background:#FFF9C4;color:#827717}
+.badge-faible{background:#C8E6C9;color:#1B5E20}
+.badge-malade{background:#BBDEFB;color:#0D47A1}
+.badge-actif{background:#C8E6C9;color:#1B5E20}
+.badge-inactif{background:#F5F5F5;color:#9E9E9E}
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.toolbar input[type=text]{flex:1;min-width:180px;padding:9px 14px;border:1.5px solid var(--gris-bord);border-radius:8px;font-size:13px;outline:none}
+.toolbar input[type=text]:focus{border-color:var(--vert-clair)}
+.tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--vert-light);border-radius:10px;padding:4px;flex-wrap:wrap}
+.tab-btn{flex:1;padding:8px 12px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--gris-texte);transition:all .2s;text-align:center;min-width:80px}
+.tab-btn.active{background:var(--vert-clair);color:var(--blanc)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.form-full{grid-column:1/-1}
+.form-section-title{font-size:12px;font-weight:700;color:var(--vert-clair);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--vert-light);grid-column:1/-1}
+.checkbox-group{display:flex;flex-wrap:wrap;gap:10px}
+.checkbox-group label{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+.radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.radio-group label{display:flex;align-items:center;gap:6px;font-size:13px;padding:7px 14px;border:1.5px solid var(--gris-bord);border-radius:8px;cursor:pointer;transition:all .2s}
+.radio-group label:has(input:checked){border-color:var(--vert-clair);background:var(--vert-light)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;padding:16px;overflow-y:auto}
+.modal-overlay.open{display:flex;align-items:flex-start;justify-content:center;padding-top:40px}
+.modal{background:var(--blanc);border-radius:14px;width:100%;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-header{padding:18px 20px;border-bottom:1px solid var(--gris-bord);display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-size:16px;font-weight:700;color:var(--vert)}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--gris-texte)}
+.modal-body{padding:20px;max-height:70vh;overflow-y:auto}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--gris-bord);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.finance-bar{height:14px;border-radius:7px;background:var(--gris-bord);overflow:hidden;margin:6px 0}
+.finance-fill{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--vert-clair),var(--or))}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.inv-card{background:var(--blanc);border:1.5px solid var(--gris-bord);border-radius:10px;padding:14px;text-align:center}
+.inv-card.low{border-color:#EF9A9A}
+.inv-icon{font-size:32px;margin-bottom:8px}
+.inv-name{font-size:12px;font-weight:600;color:var(--gris-texte);margin-bottom:6px}
+.inv-stock{font-size:22px;font-weight:700;color:var(--vert)}
+.inv-alert{color:var(--rouge);font-size:11px;margin-top:4px}
+.visite-card{border:1px solid var(--gris-bord);border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--vert-clair)}
+.v-header{display:flex;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+.v-date{font-size:13px;font-weight:700;color:var(--vert)}
+.v-activites{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.v-tag{background:var(--vert-light);color:var(--vert);font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600}
+.projet-card{border:1px solid var(--gris-bord);border-radius:10px;padding:16px;margin-bottom:10px}
+.projet-montants{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0;text-align:center}
+.pm-label{font-size:10px;color:var(--gris-texte);font-weight:600;text-transform:uppercase}
+.pm-val{font-size:16px;font-weight:700;color:var(--vert)}
+.rapport-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.rapport-btn{background:var(--blanc);border:1.5px solid var(--gris-bord);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s}
+.rapport-btn:hover{border-color:var(--vert-clair);background:var(--vert-light)}
+.r-icon{font-size:32px;margin-bottom:8px}
+.r-name{font-size:13px;font-weight:600;color:var(--vert)}
+.r-desc{font-size:11px;color:var(--gris-texte);margin-top:4px}
+.portail-link{background:var(--vert-light);border:1px solid var(--vert-clair);border-radius:8px;padding:10px 14px;font-size:12px;word-break:break-all;color:var(--vert);margin:8px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.memo-box{background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:16px;font-size:13px;line-height:1.7;white-space:pre-line;margin-top:10px}
+.fb-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600}
+.fb-online{background:#E8F5E9;color:var(--vert)}
+.fb-offline{background:#F5F5F5;color:#9E9E9E}
+.fb-saving{background:#FFF8E1;color:#F57F17}
+@media(max-width:768px){
+  #sidebar{position:fixed;left:0;top:0;z-index:900;transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #menu-toggle{display:block}
+  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:800}
+  #overlay.open{display:block}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .projet-montants{grid-template-columns:1fr 1fr}
+}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--vert-clair);color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;display:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -170,20 +164,13 @@
   <div class="login-box">
     <div class="login-logo">
       <div class="cross">✝</div>
-      <h1>MINISTÈRE TABITA</h1>
-      <p>Honorer ceux qui ont servi</p>
+      <h1 id="login-ministere-nom">MINISTÈRE TABITA</h1>
+      <p id="login-ministere-slogan">Honorer ceux qui ont servi</p>
     </div>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" id="login-email" placeholder="votre@email.com">
-    </div>
-    <div class="form-group">
-      <label>Mot de passe</label>
-      <input type="password" id="login-pwd" placeholder="••••••••">
-    </div>
+    <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="votre@email.com"></div>
+    <div class="form-group"><label>Mot de passe</label><input type="password" id="login-pwd" placeholder="••••••••"></div>
     <button class="btn btn-primary btn-full" onclick="doLogin()" id="login-btn">SE CONNECTER</button>
     <div id="login-error"></div>
-    <div class="login-forgot"><a href="#">Mot de passe oublié ?</a></div>
   </div>
 </div>
 
@@ -192,14 +179,14 @@
   <div id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-cross">✝</div>
-      <h2>MINISTÈRE TABITA</h2>
-      <p>Honorer ceux qui ont servi</p>
+      <h2 id="sb-ministere-nom">MINISTÈRE TABITA</h2>
+      <p id="sb-ministere-slogan">Honorer ceux qui ont servi</p>
     </div>
     <div class="sidebar-user">
       <div class="avatar" id="sb-avatar">A</div>
       <div class="sidebar-user-info">
-        <div class="u-name" id="sb-name">Chargement...</div>
-        <div class="u-role" id="sb-role">–</div>
+        <div class="u-name" id="sb-name">–</div>
+        <div class="u-role" id="sb-role">Administrateur</div>
       </div>
     </div>
     <nav>
@@ -236,9 +223,7 @@
       </div>
     </nav>
     <div class="sidebar-footer">
-      <div style="padding:8px 0 12px">
-        <span id="fb-indicator" class="fb-status fb-offline">⚫ Hors ligne</span>
-      </div>
+      <div style="padding:6px 0 10px"><span id="fb-indicator" class="fb-status fb-offline">⚫ Hors ligne</span></div>
       <div class="nav-item" onclick="doLogout()"><span class="nav-icon">🚪</span> Déconnexion</div>
     </div>
   </div>
@@ -248,7 +233,7 @@
       <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
       <div id="page-title">Tableau de bord</div>
       <div class="topbar-actions">
-        <button class="notif-btn" onclick="showPage('notifications')">🔔<span class="notif-dot" id="notif-dot" style="display:none"></span></button>
+        <button class="notif-btn" onclick="showPage('notifications')">🔔<span class="notif-dot" id="notif-dot"></span></button>
         <div class="avatar" style="cursor:pointer" onclick="showPage('parametres')" id="top-avatar">A</div>
       </div>
     </div>
@@ -259,18 +244,14 @@
 <!-- MODAL BÉNÉFICIAIRE -->
 <div class="modal-overlay" id="modal-benef">
   <div class="modal">
-    <div class="modal-header">
-      <h3 id="modal-benef-title">Nouveau Bénéficiaire</h3>
-      <button class="modal-close" onclick="closeModal('modal-benef')">×</button>
-    </div>
+    <div class="modal-header"><h3 id="modal-benef-title">Nouveau Bénéficiaire</h3><button class="modal-close" onclick="closeModal('modal-benef')">×</button></div>
     <div class="modal-body">
-      <input type="hidden" id="b-edit-id">
+      <input type="hidden" id="b-key">
       <div class="form-grid">
         <div class="form-section-title">📋 Informations personnelles</div>
         <div class="form-group"><label>Nom *</label><input type="text" id="b-nom" placeholder="Nom de famille"></div>
         <div class="form-group"><label>Prénom *</label><input type="text" id="b-prenom" placeholder="Prénom"></div>
-        <div class="form-group"><label>Sexe</label>
-          <select id="b-sexe"><option>Féminin</option><option>Masculin</option></select></div>
+        <div class="form-group"><label>Sexe</label><select id="b-sexe"><option>Féminin</option><option>Masculin</option></select></div>
         <div class="form-group"><label>Date de naissance</label><input type="date" id="b-naissance"></div>
         <div class="form-group"><label>Téléphone</label><input type="tel" id="b-tel" placeholder="+509 XXXX XXXX"></div>
         <div class="form-group"><label>Commune</label><input type="text" id="b-commune" placeholder="Jérémie..."></div>
@@ -307,18 +288,14 @@
 <!-- MODAL VISITE -->
 <div class="modal-overlay" id="modal-visite">
   <div class="modal">
-    <div class="modal-header">
-      <h3>Nouvelle Visite</h3>
-      <button class="modal-close" onclick="closeModal('modal-visite')">×</button>
-    </div>
+    <div class="modal-header"><h3 id="modal-visite-title">Nouvelle Visite</h3><button class="modal-close" onclick="closeModal('modal-visite')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="v-key">
       <div class="form-grid">
         <div class="form-group"><label>Date *</label><input type="date" id="v-date"></div>
         <div class="form-group"><label>Heure</label><input type="time" id="v-heure"></div>
-        <div class="form-group form-full"><label>Bénéficiaire *</label>
-          <select id="v-benef"><option value="">-- Sélectionner --</option></select></div>
-        <div class="form-group form-full"><label>Adresse de visite</label>
-          <textarea id="v-adresse" placeholder="Adresse exacte..."></textarea></div>
+        <div class="form-group form-full"><label>Bénéficiaire *</label><select id="v-benef"><option value="">-- Sélectionner --</option></select></div>
+        <div class="form-group form-full"><label>Adresse de visite</label><textarea id="v-adresse" placeholder="Adresse exacte..."></textarea></div>
         <div class="form-section-title">✅ Activités réalisées</div>
         <div class="form-group form-full">
           <div class="checkbox-group">
@@ -333,18 +310,15 @@
           </div>
         </div>
         <div class="form-section-title">📝 Rapport</div>
-        <div class="form-group form-full"><label>Observation générale</label>
-          <textarea id="v-rapport" placeholder="État général, besoins observés..."></textarea></div>
-        <div class="form-group"><label>État de santé</label>
-          <select id="v-sante"><option>Excellent</option><option>Bon</option><option>Passable</option><option>Mauvais</option><option>Critique</option></select></div>
+        <div class="form-group form-full"><label>Observation générale</label><textarea id="v-rapport" placeholder="État général, besoins observés..."></textarea></div>
+        <div class="form-group"><label>État de santé</label><select id="v-sante"><option>Excellent</option><option>Bon</option><option>Passable</option><option>Mauvais</option><option>Critique</option></select></div>
         <div class="form-group"><label>Prochaine visite</label><input type="date" id="v-prochain"></div>
-        <div class="form-group form-full"><label>Besoin urgent</label>
-          <input type="text" id="v-besoin" placeholder="Médicaments, nourriture..."></div>
+        <div class="form-group form-full"><label>Besoin urgent</label><input type="text" id="v-besoin" placeholder="Médicaments, nourriture..."></div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-visite')">Annuler</button>
-      <button class="btn btn-primary" onclick="saveVisite()" id="btn-save-visite">✔ Enregistrer la visite</button>
+      <button class="btn btn-primary" onclick="saveVisite()" id="btn-save-visite">✔ Enregistrer</button>
     </div>
   </div>
 </div>
@@ -352,26 +326,21 @@
 <!-- MODAL DON -->
 <div class="modal-overlay" id="modal-don">
   <div class="modal">
-    <div class="modal-header">
-      <h3>Nouveau Don</h3>
-      <button class="modal-close" onclick="closeModal('modal-don')">×</button>
-    </div>
+    <div class="modal-header"><h3 id="modal-don-title">Nouveau Don</h3><button class="modal-close" onclick="closeModal('modal-don')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="d-key">
       <div class="form-grid">
         <div class="form-group"><label>Date *</label><input type="date" id="d-date"></div>
-        <div class="form-group"><label>Type de don</label>
-          <select id="d-type"><option>Argent</option><option>Nourriture</option><option>Médicaments</option><option>Vêtements</option><option>Matériel</option><option>Service</option></select></div>
+        <div class="form-group"><label>Type de don</label><select id="d-type"><option>Argent</option><option>Nourriture</option><option>Médicaments</option><option>Vêtements</option><option>Matériel</option><option>Service</option></select></div>
         <div class="form-group"><label>Montant (HTG)</label><input type="number" id="d-montant" placeholder="0.00"></div>
         <div class="form-group"><label>N° Reçu</label><input type="text" id="d-recu" placeholder="RC-2024-001"></div>
-        <div class="form-group form-full"><label>Sponsor</label>
-          <select id="d-sponsor"><option value="">-- Sélectionner --</option></select></div>
-        <div class="form-group form-full"><label>Description</label>
-          <textarea id="d-desc" placeholder="Détails du don..."></textarea></div>
+        <div class="form-group form-full"><label>Sponsor *</label><select id="d-sponsor"><option value="">-- Sélectionner --</option></select></div>
+        <div class="form-group form-full"><label>Description</label><textarea id="d-desc" placeholder="Détails du don..."></textarea></div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-don')">Annuler</button>
-      <button class="btn btn-or" onclick="saveDon()" id="btn-save-don">💰 Enregistrer le don</button>
+      <button class="btn btn-or" onclick="saveDon()" id="btn-save-don">💰 Enregistrer</button>
     </div>
   </div>
 </div>
@@ -379,20 +348,15 @@
 <!-- MODAL DÉPENSE -->
 <div class="modal-overlay" id="modal-depense">
   <div class="modal">
-    <div class="modal-header">
-      <h3>Nouvelle Dépense</h3>
-      <button class="modal-close" onclick="closeModal('modal-depense')">×</button>
-    </div>
+    <div class="modal-header"><h3 id="modal-dep-title">Nouvelle Dépense</h3><button class="modal-close" onclick="closeModal('modal-depense')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="dep-key">
       <div class="form-grid">
         <div class="form-group"><label>Date *</label><input type="date" id="dep-date"></div>
-        <div class="form-group"><label>Catégorie</label>
-          <select id="dep-cat"><option>Alimentation</option><option>Médicaments</option><option>Transport</option><option>Réparation</option><option>Matériel</option><option>Autre</option></select></div>
+        <div class="form-group"><label>Catégorie</label><select id="dep-cat"><option>Alimentation</option><option>Médicaments</option><option>Transport</option><option>Réparation</option><option>Matériel</option><option>Autre</option></select></div>
         <div class="form-group"><label>Montant (HTG) *</label><input type="number" id="dep-montant" placeholder="0.00"></div>
-        <div class="form-group form-full"><label>Bénéficiaire concerné</label>
-          <select id="dep-benef"><option value="">-- Optionnel --</option></select></div>
-        <div class="form-group form-full"><label>Justification</label>
-          <textarea id="dep-just" placeholder="Raison de la dépense..."></textarea></div>
+        <div class="form-group form-full"><label>Bénéficiaire concerné</label><select id="dep-benef"><option value="">-- Optionnel --</option></select></div>
+        <div class="form-group form-full"><label>Justification</label><textarea id="dep-just" placeholder="Raison de la dépense..."></textarea></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -402,174 +366,242 @@
   </div>
 </div>
 
+<!-- MODAL SPONSOR -->
+<div class="modal-overlay" id="modal-sponsor">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modal-sponsor-title">Nouveau Sponsor</h3><button class="modal-close" onclick="closeModal('modal-sponsor')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="sp-key">
+      <div class="form-grid">
+        <div class="form-group"><label>Nom *</label><input type="text" id="sp-nom" placeholder="Nom du sponsor"></div>
+        <div class="form-group"><label>Type</label><select id="sp-type"><option>Individu</option><option>Église</option><option>Entreprise</option><option>ONG</option><option>Fondation</option></select></div>
+        <div class="form-group"><label>Organisation</label><input type="text" id="sp-org" placeholder="Nom de l'organisation"></div>
+        <div class="form-group"><label>Téléphone (WhatsApp) *</label><input type="tel" id="sp-tel" placeholder="+509 XXXX XXXX"></div>
+        <div class="form-group form-full"><label>Email</label><input type="email" id="sp-email" placeholder="email@exemple.com"></div>
+        <div class="form-group form-full"><label>Adresse</label><textarea id="sp-adresse" placeholder="Adresse du sponsor..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-sponsor')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveSponsor()" id="btn-save-sponsor">✔ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MEMBRE -->
+<div class="modal-overlay" id="modal-membre">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modal-membre-title">Nouveau Membre</h3><button class="modal-close" onclick="closeModal('modal-membre')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="mb-key">
+      <div class="form-grid">
+        <div class="form-group"><label>Nom *</label><input type="text" id="mb-nom" placeholder="Nom"></div>
+        <div class="form-group"><label>Prénom *</label><input type="text" id="mb-prenom" placeholder="Prénom"></div>
+        <div class="form-group"><label>Fonction *</label><input type="text" id="mb-fonction" placeholder="Pasteur, Visiteur, Comptable..."></div>
+        <div class="form-group"><label>Téléphone</label><input type="tel" id="mb-tel" placeholder="+509 XXXX XXXX"></div>
+        <div class="form-group form-full"><label>Email (pour accès membre)</label><input type="email" id="mb-email" placeholder="email@exemple.com"></div>
+        <div class="form-group form-full"><label>Responsabilités</label><textarea id="mb-resp" placeholder="Responsabilités du membre..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-membre')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveMembre()" id="btn-save-membre">✔ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROJET -->
+<div class="modal-overlay" id="modal-projet">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modal-projet-title">Nouveau Projet</h3><button class="modal-close" onclick="closeModal('modal-projet')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="pr-key">
+      <div class="form-grid">
+        <div class="form-group form-full"><label>Nom du projet *</label><input type="text" id="pr-nom" placeholder="Ex: Réparation maison Sœur Marie"></div>
+        <div class="form-group form-full"><label>Description</label><textarea id="pr-desc" placeholder="Description du projet..."></textarea></div>
+        <div class="form-group"><label>Budget prévu (HTG)</label><input type="number" id="pr-budget" placeholder="0.00"></div>
+        <div class="form-group"><label>Montant collecté (HTG)</label><input type="number" id="pr-collecte" placeholder="0.00"></div>
+        <div class="form-group"><label>Montant dépensé (HTG)</label><input type="number" id="pr-depense" placeholder="0.00"></div>
+        <div class="form-group"><label>Statut</label><select id="pr-statut"><option>En attente</option><option>En cours</option><option>Terminé</option></select></div>
+        <div class="form-group"><label>Date début</label><input type="date" id="pr-debut"></div>
+        <div class="form-group"><label>Date fin</label><input type="date" id="pr-fin"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-projet')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveProjet()" id="btn-save-projet">✔ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MÉMO WHATSAPP -->
+<div class="modal-overlay" id="modal-memo">
+  <div class="modal">
+    <div class="modal-header"><h3>📲 Mémo de Remerciement</h3><button class="modal-close" onclick="closeModal('modal-memo')">×</button></div>
+    <div class="modal-body">
+      <div class="alert alert-success" id="memo-info"></div>
+      <div class="memo-box" id="memo-texte"></div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="envoyerWhatsapp()" id="btn-whatsapp">📲 Envoyer via WhatsApp</button>
+        <button class="btn btn-ghost" onclick="envoyerSMS()" id="btn-sms">💬 Envoyer via SMS</button>
+        <button class="btn btn-ghost" onclick="copierMemo()">📋 Copier le texte</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-memo')">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ===== FIREBASE CONFIG =====
+// ===== FIREBASE =====
 const FB = {
-  apiKey:   "AIzaSyAr9FYcZzHZxZtoirDbsIumq2ELlTUDDWw",
-  authUrl:  "https://identitytoolkit.googleapis.com/v1",
-  dbUrl:    "https://ministere-tabitha-sgmt-default-rtdb.firebaseio.com"
+  apiKey: "AIzaSyAr9FYcZzHZxZtoirDbsIumq2ELlTUDDWw",
+  authUrl: "https://identitytoolkit.googleapis.com/v1",
+  dbUrl: "https://ministere-tabitha-sgmt-default-rtdb.firebaseio.com"
 };
+let AUTH = { token:null, uid:null, email:null, nom:'' };
+let MEMO_DATA = {};
 
-let AUTH = { token: null, uid: null, email: null, nom: '' };
-
-// ===== FIREBASE REST =====
-async function fbSignIn(email, password) {
+async function fbSignIn(email, pwd) {
   const r = await fetch(`${FB.authUrl}/accounts:signInWithPassword?key=${FB.apiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, returnSecureToken: true })
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({email, password:pwd, returnSecureToken:true})
   });
   return r.json();
 }
-
 async function fbGet(path) {
-  try {
-    const r = await fetch(`${FB.dbUrl}/${path}.json?auth=${AUTH.token}`);
-    return r.json();
-  } catch(e) { return null; }
+  try { const r = await fetch(`${FB.dbUrl}/${path}.json?auth=${AUTH.token}`); return r.json(); } catch(e){ return null; }
 }
-
 async function fbPush(path, data) {
   const r = await fetch(`${FB.dbUrl}/${path}.json?auth=${AUTH.token}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...data, _ts: Date.now() })
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({...data, _ts: Date.now()})
   });
   return r.json();
 }
-
 async function fbSet(path, data) {
   const r = await fetch(`${FB.dbUrl}/${path}.json?auth=${AUTH.token}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...data, _ts: Date.now() })
+    method:'PUT', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({...data, _ts: Date.now()})
   });
   return r.json();
 }
-
 async function fbDelete(path) {
-  await fetch(`${FB.dbUrl}/${path}.json?auth=${AUTH.token}`, { method: 'DELETE' });
+  await fetch(`${FB.dbUrl}/${path}.json?auth=${AUTH.token}`, {method:'DELETE'});
 }
 
-// CACHE LOCAL (fallback offline)
-const CACHE = {
-  beneficiaires: {}, membres: {}, sponsors: {}, dons: {},
-  depenses: {}, visites: {}, projets: {}, inventaire: {}, notifications: {}
-};
+// ===== CACHE =====
+const C = { beneficiaires:{}, membres:{}, sponsors:{}, dons:{}, depenses:{}, visites:{}, projets:{}, inventaire:{}, notifications:{}, parametres:{} };
 
-// ===== CONNEXION =====
+// ===== AUTH =====
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pwd   = document.getElementById('login-pwd').value;
   const err   = document.getElementById('login-error');
   const btn   = document.getElementById('login-btn');
-  if (!email || !pwd) { showErr('Veuillez remplir tous les champs'); return; }
-  btn.innerHTML = '<span class="spinner"></span> Connexion...';
-  btn.disabled = true;
-  err.style.display = 'none';
+  if (!email||!pwd) { err.textContent='⚠ Remplissez tous les champs'; err.style.display='block'; return; }
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; err.style.display='none';
   const res = await fbSignIn(email, pwd);
   if (res.idToken) {
-    AUTH.token = res.idToken;
-    AUTH.uid   = res.localId;
-    AUTH.email = email;
-    AUTH.nom   = res.displayName || email.split('@')[0];
+    AUTH = { token:res.idToken, uid:res.localId, email, nom:res.displayName||email.split('@')[0] };
     localStorage.setItem('sgmt_token', res.idToken);
     localStorage.setItem('sgmt_uid',   res.localId);
     localStorage.setItem('sgmt_email', email);
     localStorage.setItem('sgmt_nom',   AUTH.nom);
     lancerApp();
   } else {
-    const msg = res.error?.message;
-    showErr(msg === 'EMAIL_NOT_FOUND' || msg === 'INVALID_PASSWORD' || msg === 'INVALID_LOGIN_CREDENTIALS'
-      ? 'Email ou mot de passe incorrect' : 'Erreur de connexion. Vérifiez votre connexion internet.');
-    btn.innerHTML = 'SE CONNECTER';
-    btn.disabled = false;
+    err.textContent='⚠ Email ou mot de passe incorrect';
+    err.style.display='block';
+    btn.innerHTML='SE CONNECTER'; btn.disabled=false;
   }
 }
-function showErr(msg) {
-  const e = document.getElementById('login-error');
-  e.textContent = '⚠ ' + msg;
-  e.style.display = 'block';
-}
-
 function doLogout() {
-  AUTH = { token: null, uid: null, email: null, nom: '' };
-  localStorage.removeItem('sgmt_token');
-  localStorage.removeItem('sgmt_uid');
-  localStorage.removeItem('sgmt_email');
-  localStorage.removeItem('sgmt_nom');
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-pwd').value = '';
-  document.getElementById('login-btn').innerHTML = 'SE CONNECTER';
-  document.getElementById('login-btn').disabled = false;
-  showToast('Déconnecté avec succès');
+  AUTH = { token:null, uid:null, email:null, nom:'' };
+  ['sgmt_token','sgmt_uid','sgmt_email','sgmt_nom'].forEach(k=>localStorage.removeItem(k));
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('login-btn').innerHTML='SE CONNECTER';
+  document.getElementById('login-btn').disabled=false;
+  showToast('Déconnecté');
 }
-
-function lancerApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
+async function lancerApp() {
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
   document.getElementById('sb-name').textContent = AUTH.nom;
-  document.getElementById('sb-role').textContent = 'Administrateur';
   const av = AUTH.nom.charAt(0).toUpperCase();
   document.getElementById('sb-avatar').textContent = av;
   document.getElementById('top-avatar').textContent = av;
-  setFbStatus('online');
-  chargerTout();
+  setFbStatus('saving');
+  await chargerTout();
+  appliquerParametres();
   showPage('dashboard');
 }
 
-// ===== INDICATEUR FIREBASE =====
+// ===== INDICATEUR =====
 function setFbStatus(s) {
-  const el = document.getElementById('fb-indicator');
-  if (!el) return;
-  if (s === 'online')  { el.className='fb-status fb-online';  el.textContent='🟢 Firebase connecté'; }
-  if (s === 'offline') { el.className='fb-status fb-offline'; el.textContent='⚫ Hors ligne'; }
-  if (s === 'saving')  { el.className='fb-status fb-saving';  el.textContent='🔄 Sauvegarde...'; }
+  const el = document.getElementById('fb-indicator'); if(!el) return;
+  const m = { online:['fb-online','🟢 Firebase connecté'], offline:['fb-offline','⚫ Hors ligne'], saving:['fb-saving','🔄 Sauvegarde...'] };
+  el.className = 'fb-status ' + m[s][0]; el.textContent = m[s][1];
 }
 
-// ===== CHARGEMENT DONNÉES =====
+// ===== CHARGEMENT =====
 async function chargerTout() {
   try {
-    const [b, m, s, d, dep, v, p, inv, n] = await Promise.all([
-      fbGet('beneficiaires'), fbGet('membres'), fbGet('sponsors'),
-      fbGet('dons'), fbGet('depenses'), fbGet('visites'),
-      fbGet('projets'), fbGet('inventaire'), fbGet('notifications')
+    const [b,mb,sp,d,dep,v,pr,inv,n,param] = await Promise.all([
+      fbGet('beneficiaires'), fbGet('membres'), fbGet('sponsors'), fbGet('dons'),
+      fbGet('depenses'), fbGet('visites'), fbGet('projets'), fbGet('inventaire'),
+      fbGet('notifications'), fbGet('parametres')
     ]);
-    CACHE.beneficiaires  = b   || {};
-    CACHE.membres        = m   || {};
-    CACHE.sponsors       = s   || {};
-    CACHE.dons           = d   || {};
-    CACHE.depenses       = dep || {};
-    CACHE.visites        = v   || {};
-    CACHE.projets        = p   || {};
-    CACHE.inventaire     = inv || {};
-    CACHE.notifications  = n   || {};
-    updateBadges();
-    if (APP_PAGE === 'dashboard') showPage('dashboard');
-    setFbStatus('online');
-  } catch(e) {
-    setFbStatus('offline');
-  }
+    C.beneficiaires = b||{}; C.membres=mb||{}; C.sponsors=sp||{}; C.dons=d||{};
+    C.depenses=dep||{}; C.visites=v||{}; C.projets=pr||{}; C.inventaire=inv||{};
+    C.notifications=n||{}; C.parametres=param||{};
+    updateBadges(); setFbStatus('online');
+  } catch(e) { setFbStatus('offline'); }
 }
 
-function arr(obj) { return obj ? Object.entries(obj).map(([k,v])=>({...v, _key:k})) : []; }
+// ===== PARAMÈTRES =====
+function appliquerParametres() {
+  const p = C.parametres;
+  const nom    = p.nom    || 'MINISTÈRE TABITA';
+  const slogan = p.slogan || 'Honorer ceux qui ont servi';
+  ['login-ministere-nom','sb-ministere-nom'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nom; });
+  ['login-ministere-slogan','sb-ministere-slogan'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=slogan; });
+  document.title = 'SGMT – ' + nom;
+}
+
+// ===== UTILS =====
+function arr(obj) { return obj ? Object.entries(obj).map(([k,v])=>({...v,_key:k})) : []; }
+function fmtHTG(n) { return (parseFloat(n)||0).toLocaleString('fr-HT')+' HTG'; }
+function today() { return new Date().toISOString().split('T')[0]; }
+function genToken() { return Math.random().toString(36).substr(2,8).toUpperCase(); }
+function urgenceBadge(u) {
+  const m={Critique:'badge-critique',Élevé:'badge-eleve',Moyen:'badge-moyen',Faible:'badge-faible'};
+  return `<span class="badge-status ${m[u]||'badge-moyen'}">${u||'Moyen'}</span>`;
+}
+function totalDons()     { return arr(C.dons).reduce((s,d)=>s+(parseFloat(d.montant)||0),0); }
+function totalDepenses() { return arr(C.depenses).reduce((s,d)=>s+(parseFloat(d.montant)||0),0); }
 function updateBadges() {
-  document.getElementById('badge-benef').textContent   = arr(CACHE.beneficiaires).length;
-  document.getElementById('badge-visites').textContent = arr(CACHE.visites).length;
-  const unread = arr(CACHE.notifications).filter(n=>!n.lu).length;
-  const dot = document.getElementById('notif-dot');
-  if (dot) dot.style.display = unread > 0 ? 'block' : 'none';
+  document.getElementById('badge-benef').textContent   = arr(C.beneficiaires).length;
+  document.getElementById('badge-visites').textContent = arr(C.visites).length;
+  const unread = arr(C.notifications).filter(n=>!n.lu).length;
+  document.getElementById('notif-dot').style.display = unread>0?'block':'none';
 }
+function showToast(msg, type='vert') {
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=type==='rouge'?'var(--rouge)':type==='or'?'var(--or)':'var(--vert-clair)';
+  t.style.display='block'; setTimeout(()=>t.style.display='none',3200);
+}
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
 
-// ===== NAVIGATION =====
 let APP_PAGE = 'dashboard';
 function showPage(page) {
-  APP_PAGE = page;
-  closeSidebar();
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  event && event.currentTarget && event.currentTarget.classList && event.currentTarget.classList.add('active');
+  APP_PAGE = page; closeSidebar();
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
   const titles = {
     dashboard:'🏠 Tableau de bord', beneficiaires:'👥 Bénéficiaires',
     spirituel:'🙏 Dossier Spirituel', sante:'🏥 Santé', visites:'🚗 Visites',
@@ -577,235 +609,182 @@ function showPage(page) {
     depenses:'🧾 Dépenses', inventaire:'📦 Inventaire', projets:'🏗 Projets',
     rapports:'📊 Rapports', notifications:'🔔 Notifications', parametres:'⚙ Paramètres'
   };
-  document.getElementById('page-title').textContent = titles[page] || page;
+  document.getElementById('page-title').textContent = titles[page]||page;
   const pages = {
-    dashboard: renderDashboard, beneficiaires: renderBeneficiaires,
-    spirituel: renderSpiriturel, sante: renderSante, visites: renderVisites,
-    membres: renderMembres, sponsors: renderSponsors, dons: renderDons,
-    depenses: renderDepenses, inventaire: renderInventaire, projets: renderProjets,
-    rapports: renderRapports, notifications: renderNotifications, parametres: renderParametres
+    dashboard:renderDashboard, beneficiaires:renderBeneficiaires, spirituel:renderSpiriturel,
+    sante:renderSante, visites:renderVisites, membres:renderMembres, sponsors:renderSponsors,
+    dons:renderDons, depenses:renderDepenses, inventaire:renderInventaire, projets:renderProjets,
+    rapports:renderRapports, notifications:renderNotifications, parametres:renderParametres
   };
   document.getElementById('content').innerHTML = pages[page] ? pages[page]() : `<div class="card"><p>Module en développement...</p></div>`;
 }
 
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('open'); }
-function closeSidebar()  { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
-function showToast(msg, type='vert') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.background = type==='rouge'?'var(--rouge)':type==='or'?'var(--or)':'var(--vert-clair)';
-  t.style.display = 'block';
-  setTimeout(() => t.style.display='none', 3000);
-}
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-// ===== UTILITAIRES =====
-function fmtHTG(n) { return (parseFloat(n)||0).toLocaleString('fr-HT') + ' HTG'; }
-function urgenceBadge(u) {
-  const m = { Critique:'badge-critique', Élevé:'badge-eleve', Moyen:'badge-moyen', Faible:'badge-faible' };
-  return `<span class="badge-status ${m[u]||'badge-moyen'}">${u||'Moyen'}</span>`;
-}
-function totalDons()     { return arr(CACHE.dons).reduce((s,d)=>s+(parseFloat(d.montant)||0),0); }
-function totalDepenses() { return arr(CACHE.depenses).reduce((s,d)=>s+(parseFloat(d.montant)||0),0); }
-function genCode(prefix, obj) { return `${prefix}-${String(arr(obj).length+1).padStart(3,'0')}`; }
-
 // ===== DASHBOARD =====
 function renderDashboard() {
-  const benefs   = arr(CACHE.beneficiaires);
-  const visites  = arr(CACHE.visites);
-  const critiques = benefs.filter(b=>b.urgence==='Critique').length;
-  const projets  = arr(CACHE.projets);
-  const attente  = projets.filter(p=>p.statut==='En attente').length;
-  const solde    = totalDons() - totalDepenses();
-  const recVisites = visites.slice(-3).reverse();
-  const recDons   = arr(CACHE.dons).slice(-1);
+  const benefs=arr(C.beneficiaires), visites=arr(C.visites), projets=arr(C.projets);
+  const critiques=benefs.filter(b=>b.urgence==='Critique').length;
+  const attente=projets.filter(p=>p.statut==='En attente').length;
+  const solde=totalDons()-totalDepenses();
   return `
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Bénéficiaires</div><div class="stat-val">${benefs.length}</div><div class="stat-sub">Enregistrés</div></div>
-    <div class="stat-card or"><div class="stat-label">Sponsors</div><div class="stat-val">${arr(CACHE.sponsors).length}</div><div class="stat-sub">Partenaires</div></div>
-    <div class="stat-card bleu"><div class="stat-label">Membres</div><div class="stat-val">${arr(CACHE.membres).length}</div><div class="stat-sub">Du ministère</div></div>
-    <div class="stat-card"><div class="stat-label">Visites</div><div class="stat-val">${visites.length}</div><div class="stat-sub">Effectuées</div></div>
+    <div class="stat-card"><div class="stat-label">Bénéficiaires</div><div class="stat-val">${benefs.length}</div></div>
+    <div class="stat-card or"><div class="stat-label">Sponsors</div><div class="stat-val">${arr(C.sponsors).length}</div></div>
+    <div class="stat-card bleu"><div class="stat-label">Membres</div><div class="stat-val">${arr(C.membres).length}</div></div>
+    <div class="stat-card"><div class="stat-label">Visites</div><div class="stat-val">${visites.length}</div></div>
   </div>
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Total dons</div><div class="stat-val" style="font-size:17px">${fmtHTG(totalDons())}</div></div>
-    <div class="stat-card rouge"><div class="stat-label">Dépenses</div><div class="stat-val" style="font-size:17px">${fmtHTG(totalDepenses())}</div></div>
+    <div class="stat-card"><div class="stat-label">Total dons</div><div class="stat-val" style="font-size:16px">${fmtHTG(totalDons())}</div></div>
+    <div class="stat-card rouge"><div class="stat-label">Dépenses</div><div class="stat-val" style="font-size:16px">${fmtHTG(totalDepenses())}</div></div>
     <div class="stat-card or" style="grid-column:1/-1"><div class="stat-label">Solde actuel</div><div class="stat-val" style="font-size:20px;color:var(--vert)">${fmtHTG(solde)}</div></div>
   </div>
   <div class="card">
-    <div class="card-title"><span>⚠</span> Alertes</div>
+    <div class="card-title">⚠ Alertes</div>
     ${critiques>0?`<div class="alert alert-danger">🔴 ${critiques} bénéficiaire(s) en état critique</div>`:''}
     ${attente>0?`<div class="alert alert-warning">🟡 ${attente} projet(s) en attente de financement</div>`:''}
-    ${benefs.length===0?`<div class="alert alert-info">ℹ Aucun bénéficiaire encore enregistré. <button class="btn btn-primary btn-sm" onclick="showPage('beneficiaires')">Commencer</button></div>`:''}
+    ${benefs.length===0?`<div class="alert alert-info">ℹ Aucun bénéficiaire enregistré. <button class="btn btn-primary btn-sm" onclick="showPage('beneficiaires')">Commencer</button></div>`:'<div class="alert alert-success">✅ Système opérationnel</div>'}
   </div>
   <div class="card">
-    <div class="card-title"><span>🕐</span> Activités récentes</div>
-    ${recVisites.length ? recVisites.map(v=>`
-      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--gris-bord)">
+    <div class="card-title">🕐 Activités récentes</div>
+    ${arr(C.visites).slice(-3).reverse().map(v=>`
+      <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--gris-bord)">
         <span style="font-size:22px">🚗</span>
-        <div><div style="font-weight:600;font-size:13px">Visite – ${v.benef}</div><div style="font-size:11px;color:var(--gris-texte)">${v.date} • ${v.sante||''}</div></div>
-      </div>`).join('') : '<p style="color:var(--gris-texte);font-size:13px">Aucune visite récente.</p>'}
-    ${recDons.map(d=>`
-      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0">
+        <div><div style="font-weight:600;font-size:13px">Visite – ${v.benef||'–'}</div><div style="font-size:11px;color:var(--gris-texte)">${v.date||''} • ${v.sante||''}</div></div>
+      </div>`).join('') || '<p style="color:var(--gris-texte);font-size:13px">Aucune visite récente.</p>'}
+    ${arr(C.dons).slice(-1).map(d=>`
+      <div style="display:flex;gap:10px;padding:10px 0">
         <span style="font-size:22px">💰</span>
-        <div><div style="font-weight:600;font-size:13px">Don – ${d.sponsor||'Sponsor'}</div><div style="font-size:11px;color:var(--gris-texte)">${d.date} • ${fmtHTG(d.montant)}</div></div>
+        <div><div style="font-weight:600;font-size:13px">Don – ${d.sponsor||'–'}</div><div style="font-size:11px;color:var(--gris-texte)">${d.date||''} • ${fmtHTG(d.montant)}</div></div>
       </div>`).join('')}
   </div>`;
 }
 
 // ===== BÉNÉFICIAIRES =====
 function renderBeneficiaires() {
-  const list = arr(CACHE.beneficiaires);
+  const list=arr(C.beneficiaires);
   return `
   <div class="card">
-    <div class="card-title"><span>👥</span> Liste des Bénéficiaires</div>
+    <div class="card-title">👥 Bénéficiaires</div>
     <div class="toolbar">
       <input type="text" placeholder="🔍 Rechercher..." oninput="filterBenef(this.value)">
       <button class="btn btn-primary" onclick="openNewBenef()">+ Ajouter</button>
     </div>
     <div class="table-wrapper">
-      <table><thead><tr><th>Code</th><th>Bénéficiaire</th><th>Statut</th><th>Commune</th><th>Urgence</th><th>Actions</th></tr></thead>
+      <table><thead><tr><th>Code</th><th>Nom</th><th>Statut</th><th>Commune</th><th>Urgence</th><th>Actions</th></tr></thead>
       <tbody id="benef-tbody">${renderBenefRows(list)}</tbody></table>
     </div>
   </div>`;
 }
 function renderBenefRows(list) {
-  if (!list.length) return `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--gris-texte)">Aucun bénéficiaire enregistré</td></tr>`;
-  return list.map(b=>`
-    <tr>
-      <td><span style="font-weight:700;color:var(--vert)">${b.code||'–'}</span></td>
-      <td><div style="font-weight:600">${b.prenom||''} ${b.nom||''}</div><div style="font-size:11px;color:var(--gris-texte)">${b.telephone||''}</div></td>
-      <td><span class="badge-status badge-malade">${b.statut||'–'}</span></td>
-      <td>${b.commune||'–'}</td>
-      <td>${urgenceBadge(b.urgence)}</td>
-      <td><div class="actions-cell">
-        <button class="btn btn-ghost btn-sm" onclick="editBenef('${b._key}')">✏ Modifier</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteBenef('${b._key}','${b.prenom} ${b.nom}')">🗑</button>
-      </div></td>
-    </tr>`).join('');
+  if(!list.length) return `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gris-texte)">Aucun bénéficiaire enregistré</td></tr>`;
+  return list.map(b=>`<tr>
+    <td><span style="font-weight:700;color:var(--vert)">${b.code||'–'}</span></td>
+    <td><div style="font-weight:600">${b.prenom||''} ${b.nom||''}</div><div style="font-size:11px;color:var(--gris-texte)">${b.telephone||''}</div></td>
+    <td><span class="badge-status badge-malade">${b.statut||'–'}</span></td>
+    <td>${b.commune||'–'}</td>
+    <td>${urgenceBadge(b.urgence)}</td>
+    <td><div class="actions-cell">
+      <button class="btn btn-ghost btn-sm" onclick="editBenef('${b._key}')">✏</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteBenef('${b._key}','${(b.prenom||'')+' '+(b.nom||'')}')">🗑</button>
+    </div></td>
+  </tr>`).join('');
 }
 function filterBenef(val) {
-  const filtered = arr(CACHE.beneficiaires).filter(b=>`${b.nom} ${b.prenom} ${b.commune}`.toLowerCase().includes(val.toLowerCase()));
-  const el = document.getElementById('benef-tbody');
-  if (el) el.innerHTML = renderBenefRows(filtered);
+  const f=arr(C.beneficiaires).filter(b=>`${b.nom} ${b.prenom} ${b.commune}`.toLowerCase().includes(val.toLowerCase()));
+  const el=document.getElementById('benef-tbody'); if(el) el.innerHTML=renderBenefRows(f);
 }
 function openNewBenef() {
-  document.getElementById('modal-benef-title').textContent = 'Nouveau Bénéficiaire';
-  document.getElementById('b-edit-id').value = '';
+  document.getElementById('modal-benef-title').textContent='Nouveau Bénéficiaire';
+  document.getElementById('b-key').value='';
   ['b-nom','b-prenom','b-tel','b-commune','b-adresse'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('b-naissance').value = '';
-  document.getElementById('b-sexe').value = 'Féminin';
+  document.getElementById('b-naissance').value='';
+  document.getElementById('b-sexe').value='Féminin';
   ['b-veuve','b-veuf','b-age','b-malade','b-handi','b-vulner'].forEach(id=>document.getElementById(id).checked=false);
-  document.querySelector('input[name="urgence"][value="Moyen"]').checked = true;
+  document.querySelector('input[name="urgence"][value="Moyen"]').checked=true;
   openModal('modal-benef');
 }
 function editBenef(key) {
-  const b = CACHE.beneficiaires[key];
-  if (!b) return;
-  document.getElementById('modal-benef-title').textContent = 'Modifier Bénéficiaire';
-  document.getElementById('b-edit-id').value = key;
-  document.getElementById('b-nom').value      = b.nom||'';
-  document.getElementById('b-prenom').value   = b.prenom||'';
-  document.getElementById('b-tel').value      = b.telephone||'';
-  document.getElementById('b-commune').value  = b.commune||'';
-  document.getElementById('b-adresse').value  = b.adresse||'';
-  document.getElementById('b-naissance').value= b.date_naissance||'';
-  document.getElementById('b-sexe').value     = b.sexe||'Féminin';
-  const statuts = b.statut ? b.statut.split(',') : [];
-  document.getElementById('b-veuve').checked  = statuts.includes('Veuve');
-  document.getElementById('b-veuf').checked   = statuts.includes('Veuf');
-  document.getElementById('b-age').checked    = statuts.includes('Personne âgée');
-  document.getElementById('b-malade').checked = statuts.includes('Malade chronique');
-  document.getElementById('b-handi').checked  = statuts.includes('Handicapé(e)');
-  document.getElementById('b-vulner').checked = statuts.includes('Vulnérable');
-  const radio = document.querySelector(`input[name="urgence"][value="${b.urgence}"]`);
-  if (radio) radio.checked = true;
+  const b=C.beneficiaires[key]; if(!b) return;
+  document.getElementById('modal-benef-title').textContent='Modifier Bénéficiaire';
+  document.getElementById('b-key').value=key;
+  document.getElementById('b-nom').value=b.nom||'';
+  document.getElementById('b-prenom').value=b.prenom||'';
+  document.getElementById('b-tel').value=b.telephone||'';
+  document.getElementById('b-commune').value=b.commune||'';
+  document.getElementById('b-adresse').value=b.adresse||'';
+  document.getElementById('b-naissance').value=b.date_naissance||'';
+  document.getElementById('b-sexe').value=b.sexe||'Féminin';
+  const st=b.statut?b.statut.split(','):[];
+  document.getElementById('b-veuve').checked=st.includes('Veuve');
+  document.getElementById('b-veuf').checked=st.includes('Veuf');
+  document.getElementById('b-age').checked=st.includes('Personne âgée');
+  document.getElementById('b-malade').checked=st.includes('Malade chronique');
+  document.getElementById('b-handi').checked=st.includes('Handicapé(e)');
+  document.getElementById('b-vulner').checked=st.includes('Vulnérable');
+  const r=document.querySelector(`input[name="urgence"][value="${b.urgence}"]`); if(r) r.checked=true;
   openModal('modal-benef');
 }
 async function saveBeneficiaire() {
-  const nom    = document.getElementById('b-nom').value.trim();
-  const prenom = document.getElementById('b-prenom').value.trim();
-  if (!nom||!prenom) { showToast('Nom et prénom obligatoires','rouge'); return; }
-  const btn = document.getElementById('btn-save-benef');
-  btn.innerHTML = '<span class="spinner"></span>';
-  btn.disabled = true;
-  setFbStatus('saving');
-  const statuts = [];
-  if (document.getElementById('b-veuve').checked)  statuts.push('Veuve');
-  if (document.getElementById('b-veuf').checked)   statuts.push('Veuf');
-  if (document.getElementById('b-age').checked)    statuts.push('Personne âgée');
-  if (document.getElementById('b-malade').checked) statuts.push('Malade chronique');
-  if (document.getElementById('b-handi').checked)  statuts.push('Handicapé(e)');
-  if (document.getElementById('b-vulner').checked) statuts.push('Vulnérable');
-  const urgence = document.querySelector('input[name="urgence"]:checked')?.value || 'Moyen';
-  const editId  = document.getElementById('b-edit-id').value;
-  const data = {
-    nom, prenom,
-    sexe:           document.getElementById('b-sexe').value,
-    date_naissance: document.getElementById('b-naissance').value,
-    telephone:      document.getElementById('b-tel').value,
-    commune:        document.getElementById('b-commune').value,
-    adresse:        document.getElementById('b-adresse').value,
-    statut:         statuts.join(',') || 'Vulnérable',
-    urgence, actif: true,
-    date_enregistrement: new Date().toISOString().split('T')[0]
-  };
-  if (editId) {
-    data.code = CACHE.beneficiaires[editId]?.code || editId;
-    await fbSet(`beneficiaires/${editId}`, data);
-    CACHE.beneficiaires[editId] = { ...data, _key: editId };
+  const nom=document.getElementById('b-nom').value.trim(), prenom=document.getElementById('b-prenom').value.trim();
+  if(!nom||!prenom){showToast('Nom et prénom obligatoires','rouge');return;}
+  const btn=document.getElementById('btn-save-benef');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
+  const st=[];
+  if(document.getElementById('b-veuve').checked) st.push('Veuve');
+  if(document.getElementById('b-veuf').checked)  st.push('Veuf');
+  if(document.getElementById('b-age').checked)   st.push('Personne âgée');
+  if(document.getElementById('b-malade').checked)st.push('Malade chronique');
+  if(document.getElementById('b-handi').checked) st.push('Handicapé(e)');
+  if(document.getElementById('b-vulner').checked)st.push('Vulnérable');
+  const urgence=document.querySelector('input[name="urgence"]:checked')?.value||'Moyen';
+  const key=document.getElementById('b-key').value;
+  const data={nom,prenom,sexe:document.getElementById('b-sexe').value,date_naissance:document.getElementById('b-naissance').value,telephone:document.getElementById('b-tel').value,commune:document.getElementById('b-commune').value,adresse:document.getElementById('b-adresse').value,statut:st.join(',')||'Vulnérable',urgence,actif:true,date_enregistrement:today()};
+  if(key) {
+    data.code=C.beneficiaires[key]?.code||key;
+    await fbSet(`beneficiaires/${key}`,data); C.beneficiaires[key]={...data,_key:key};
   } else {
-    data.code = genCode('MT', CACHE.beneficiaires);
-    const res = await fbPush('beneficiaires', data);
-    if (res?.name) CACHE.beneficiaires[res.name] = { ...data, _key: res.name };
+    data.code='MT-'+String(arr(C.beneficiaires).length+1).padStart(3,'0');
+    const res=await fbPush('beneficiaires',data); if(res?.name) C.beneficiaires[res.name]={...data,_key:res.name};
   }
-  btn.innerHTML = '✔ Enregistrer';
-  btn.disabled = false;
-  setFbStatus('online');
-  closeModal('modal-benef');
-  updateBadges();
-  showToast(`✓ ${prenom} ${nom} enregistré(e)`);
-  showPage('beneficiaires');
+  btn.innerHTML='✔ Enregistrer'; btn.disabled=false; setFbStatus('online');
+  closeModal('modal-benef'); updateBadges();
+  showToast(`✓ ${prenom} ${nom} enregistré(e)`); showPage('beneficiaires');
 }
-async function deleteBenef(key, nom) {
-  if (!confirm(`Supprimer ${nom} ?`)) return;
-  await fbDelete(`beneficiaires/${key}`);
-  delete CACHE.beneficiaires[key];
-  updateBadges();
-  showToast('Bénéficiaire supprimé');
-  showPage('beneficiaires');
+async function deleteBenef(key,nom) {
+  if(!confirm(`Supprimer ${nom} ?`)) return;
+  await fbDelete(`beneficiaires/${key}`); delete C.beneficiaires[key];
+  updateBadges(); showToast('Bénéficiaire supprimé','rouge'); showPage('beneficiaires');
 }
 
 // ===== SPIRITUEL =====
 function renderSpiriturel() {
-  const list = arr(CACHE.beneficiaires);
-  return `<div class="card"><div class="card-title"><span>🙏</span> Dossiers Spirituels</div>
+  const list=arr(C.beneficiaires);
+  return `<div class="card"><div class="card-title">🙏 Dossiers Spirituels</div>
   <div class="table-wrapper"><table><thead><tr><th>Bénéficiaire</th><th>Converti</th><th>Baptisé</th><th>Dernière Sainte-Cène</th><th>Actions</th></tr></thead>
-  <tbody>${list.length ? list.map(b=>`<tr><td><strong>${b.prenom} ${b.nom}</strong></td><td>✅</td><td>✅</td><td>–</td><td><button class="btn btn-ghost btn-sm">✏ Modifier</button></td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun dossier</td></tr>'}</tbody></table></div></div>`;
+  <tbody>${list.length?list.map(b=>`<tr><td><strong>${b.prenom||''} ${b.nom||''}</strong></td><td>✅</td><td>✅</td><td>–</td><td><button class="btn btn-ghost btn-sm">✏ Modifier</button></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun dossier</td></tr>'}</tbody></table></div></div>`;
 }
 
 // ===== SANTÉ =====
 function renderSante() {
-  return `<div class="card"><div class="card-title"><span>🏥</span> Suivi Santé</div>
+  return `<div class="card"><div class="card-title">🏥 Suivi Santé</div>
   <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..."><button class="btn btn-primary">+ Ajouter dossier</button></div>
   <div class="table-wrapper"><table><thead><tr><th>Bénéficiaire</th><th>Maladie principale</th><th>Mobilité</th><th>Médecin</th><th>Actions</th></tr></thead>
-  <tbody><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun dossier santé enregistré</td></tr></tbody></table></div></div>`;
+  <tbody><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun dossier santé</td></tr></tbody></table></div></div>`;
 }
 
 // ===== VISITES =====
 function renderVisites() {
-  const list = arr(CACHE.visites).sort((a,b)=>b.date>a.date?1:-1);
+  const list=arr(C.visites).sort((a,b)=>b.date>a.date?1:-1);
   return `
   <div class="card">
-    <div class="card-title"><span>🚗</span> Visites</div>
+    <div class="card-title">🚗 Visites</div>
     <div class="toolbar">
       <input type="text" placeholder="🔍 Rechercher...">
       <button class="btn btn-primary" onclick="openNewVisite()">+ Nouvelle visite</button>
     </div>
-    ${list.length ? list.map(v=>`
+    ${list.length?list.map(v=>`
     <div class="visite-card">
       <div class="v-header">
-        <div><div style="font-weight:700;font-size:14px">${v.benef}</div><div class="v-date">${v.date}</div></div>
+        <div><div style="font-weight:700">${v.benef||'–'}</div><div class="v-date">${v.date||''}</div></div>
         <span class="badge-status ${v.sante==='Mauvais'||v.sante==='Critique'?'badge-critique':v.sante==='Passable'?'badge-moyen':'badge-faible'}">${v.sante||'–'}</span>
       </div>
       <p style="font-size:13px;color:var(--gris-texte)">${v.rapport||'Aucun rapport'}</p>
@@ -813,236 +792,366 @@ function renderVisites() {
       <div class="v-activites">${(v.activites||[]).map(a=>`<span class="v-tag">${a}</span>`).join('')}</div>
       <div style="display:flex;justify-content:space-between;margin-top:8px;flex-wrap:wrap;gap:6px">
         <div style="font-size:11px;color:var(--gris-texte)">📅 Prochaine : ${v.prochain||'Non planifiée'}</div>
-        <button class="btn btn-danger btn-sm" onclick="deleteVisite('${v._key}')">🗑</button>
+        <div class="actions-cell">
+          <button class="btn btn-ghost btn-sm" onclick="editVisite('${v._key}')">✏</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteVisite('${v._key}')">🗑</button>
+        </div>
       </div>
-    </div>`).join('') : '<div class="alert alert-info">Aucune visite enregistrée. Cliquez sur "+ Nouvelle visite" pour commencer.</div>'}
+    </div>`).join(''):'<div class="alert alert-info">Aucune visite enregistrée.</div>'}
   </div>`;
 }
 function openNewVisite() {
-  const sel = document.getElementById('v-benef');
-  sel.innerHTML = '<option value="">-- Sélectionner --</option>' + arr(CACHE.beneficiaires).map(b=>`<option>${b.prenom} ${b.nom}</option>`).join('');
-  document.getElementById('v-date').value = new Date().toISOString().split('T')[0];
-  ['va-priere','va-cene','va-bible','va-chant','va-aliment','va-vetements','va-medical','va-nettoyage'].forEach(id=>document.getElementById(id).checked=false);
+  document.getElementById('modal-visite-title').textContent='Nouvelle Visite';
+  document.getElementById('v-key').value='';
+  const sel=document.getElementById('v-benef');
+  sel.innerHTML='<option value="">-- Sélectionner --</option>'+arr(C.beneficiaires).map(b=>`<option>${b.prenom||''} ${b.nom||''}</option>`).join('');
+  document.getElementById('v-date').value=today();
+  document.getElementById('v-heure').value='';
+  document.getElementById('v-adresse').value='';
   document.getElementById('v-rapport').value='';
   document.getElementById('v-besoin').value='';
   document.getElementById('v-prochain').value='';
+  ['va-priere','va-cene','va-bible','va-chant','va-aliment','va-vetements','va-medical','va-nettoyage'].forEach(id=>document.getElementById(id).checked=false);
+  openModal('modal-visite');
+}
+function editVisite(key) {
+  const v=C.visites[key]; if(!v) return;
+  document.getElementById('modal-visite-title').textContent='Modifier Visite';
+  document.getElementById('v-key').value=key;
+  const sel=document.getElementById('v-benef');
+  sel.innerHTML='<option value="">-- Sélectionner --</option>'+arr(C.beneficiaires).map(b=>`<option>${b.prenom||''} ${b.nom||''}</option>`).join('');
+  document.getElementById('v-date').value=v.date||'';
+  document.getElementById('v-heure').value=v.heure||'';
+  document.getElementById('v-adresse').value=v.adresse||'';
+  document.getElementById('v-rapport').value=v.rapport||'';
+  document.getElementById('v-besoin').value=v.besoin||'';
+  document.getElementById('v-prochain').value=v.prochain||'';
+  document.getElementById('v-benef').value=v.benef||'';
+  document.getElementById('v-sante').value=v.sante||'Bon';
+  const acts=v.activites||[];
+  document.getElementById('va-priere').checked=acts.includes('Prière');
+  document.getElementById('va-cene').checked=acts.includes('Sainte-Cène');
+  document.getElementById('va-bible').checked=acts.includes('Étude biblique');
+  document.getElementById('va-chant').checked=acts.includes('Chant');
+  document.getElementById('va-aliment').checked=acts.includes('Distribution alimentaire');
+  document.getElementById('va-vetements').checked=acts.includes('Distribution vêtements');
+  document.getElementById('va-medical').checked=acts.includes('Assistance médicale');
+  document.getElementById('va-nettoyage').checked=acts.includes('Nettoyage');
   openModal('modal-visite');
 }
 async function saveVisite() {
-  const benef = document.getElementById('v-benef').value;
-  const date  = document.getElementById('v-date').value;
-  if (!benef||!date) { showToast('Bénéficiaire et date obligatoires','rouge'); return; }
-  const btn = document.getElementById('btn-save-visite');
-  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
-  setFbStatus('saving');
-  const activites = [];
-  if (document.getElementById('va-priere').checked)   activites.push('Prière');
-  if (document.getElementById('va-cene').checked)     activites.push('Sainte-Cène');
-  if (document.getElementById('va-bible').checked)    activites.push('Étude biblique');
-  if (document.getElementById('va-chant').checked)    activites.push('Chant');
-  if (document.getElementById('va-aliment').checked)  activites.push('Distribution alimentaire');
-  if (document.getElementById('va-vetements').checked)activites.push('Distribution vêtements');
-  if (document.getElementById('va-medical').checked)  activites.push('Assistance médicale');
-  if (document.getElementById('va-nettoyage').checked)activites.push('Nettoyage');
-  const data = {
-    date, benef, activites,
-    heure:    document.getElementById('v-heure').value,
-    adresse:  document.getElementById('v-adresse').value,
-    rapport:  document.getElementById('v-rapport').value,
-    sante:    document.getElementById('v-sante').value,
-    prochain: document.getElementById('v-prochain').value,
-    besoin:   document.getElementById('v-besoin').value
-  };
-  const res = await fbPush('visites', data);
-  if (res?.name) CACHE.visites[res.name] = { ...data, _key: res.name };
-  btn.innerHTML='✔ Enregistrer la visite'; btn.disabled=false;
-  setFbStatus('online');
-  closeModal('modal-visite');
-  updateBadges();
-  showToast('✓ Visite enregistrée dans Firebase');
-  showPage('visites');
+  const benef=document.getElementById('v-benef').value, date=document.getElementById('v-date').value;
+  if(!benef||!date){showToast('Bénéficiaire et date obligatoires','rouge');return;}
+  const btn=document.getElementById('btn-save-visite');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
+  const activites=[];
+  if(document.getElementById('va-priere').checked)    activites.push('Prière');
+  if(document.getElementById('va-cene').checked)      activites.push('Sainte-Cène');
+  if(document.getElementById('va-bible').checked)     activites.push('Étude biblique');
+  if(document.getElementById('va-chant').checked)     activites.push('Chant');
+  if(document.getElementById('va-aliment').checked)   activites.push('Distribution alimentaire');
+  if(document.getElementById('va-vetements').checked) activites.push('Distribution vêtements');
+  if(document.getElementById('va-medical').checked)   activites.push('Assistance médicale');
+  if(document.getElementById('va-nettoyage').checked) activites.push('Nettoyage');
+  const data={date,benef,activites,heure:document.getElementById('v-heure').value,adresse:document.getElementById('v-adresse').value,rapport:document.getElementById('v-rapport').value,sante:document.getElementById('v-sante').value,prochain:document.getElementById('v-prochain').value,besoin:document.getElementById('v-besoin').value};
+  const key=document.getElementById('v-key').value;
+  if(key){ await fbSet(`visites/${key}`,data); C.visites[key]={...data,_key:key}; }
+  else { const res=await fbPush('visites',data); if(res?.name) C.visites[res.name]={...data,_key:res.name}; }
+  btn.innerHTML='✔ Enregistrer'; btn.disabled=false; setFbStatus('online');
+  closeModal('modal-visite'); updateBadges();
+  showToast('✓ Visite enregistrée'); showPage('visites');
 }
 async function deleteVisite(key) {
-  if (!confirm('Supprimer cette visite ?')) return;
-  await fbDelete(`visites/${key}`);
-  delete CACHE.visites[key];
-  updateBadges();
-  showToast('Visite supprimée');
-  showPage('visites');
+  if(!confirm('Supprimer cette visite ?')) return;
+  await fbDelete(`visites/${key}`); delete C.visites[key];
+  updateBadges(); showToast('Visite supprimée','rouge'); showPage('visites');
 }
 
 // ===== MEMBRES =====
 function renderMembres() {
-  const list = arr(CACHE.membres);
-  return `<div class="card"><div class="card-title"><span>👨‍💼</span> Membres du Ministère</div>
+  const list=arr(C.membres);
+  const baseUrl=window.location.href.split('?')[0];
+  return `<div class="card"><div class="card-title">👨‍💼 Membres du Ministère</div>
   <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..."><button class="btn btn-primary" onclick="openNewMembre()">+ Ajouter</button></div>
-  <div class="table-wrapper"><table><thead><tr><th>Membre</th><th>Fonction</th><th>Téléphone</th><th>Actions</th></tr></thead>
-  <tbody>${list.length ? list.map(m=>`<tr><td><strong>${m.prenom||''} ${m.nom||''}</strong></td><td><span class="badge-status badge-actif">${m.fonction||'–'}</span></td><td>${m.telephone||'–'}</td><td><div class="actions-cell"><button class="btn btn-danger btn-sm" onclick="deleteMembre('${m._key}')">🗑</button></div></td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun membre enregistré</td></tr>'}</tbody></table></div></div>`;
+  <div class="table-wrapper"><table><thead><tr><th>Membre</th><th>Fonction</th><th>Téléphone</th><th>Lien accès membre</th><th>Actions</th></tr></thead>
+  <tbody>${list.length?list.map(m=>{
+    const token=m.token||'–';
+    const lien=m.token?`${baseUrl}?membre=${m.token}`:'Non généré';
+    return `<tr>
+      <td><div style="font-weight:600">${m.prenom||''} ${m.nom||''}</div><div style="font-size:11px;color:var(--gris-texte)">${m.email||''}</div></td>
+      <td><span class="badge-status badge-actif">${m.fonction||'–'}</span></td>
+      <td>${m.telephone||'–'}</td>
+      <td>${m.token?`<div class="portail-link" style="font-size:11px">${lien}<button class="btn btn-ghost btn-sm" onclick="copierTexte('${lien}')">📋</button></div>`:'<span style="color:var(--gris-texte);font-size:12px">–</span>'}</td>
+      <td><div class="actions-cell">
+        <button class="btn btn-ghost btn-sm" onclick="editMembre('${m._key}')">✏</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteMembre('${m._key}')">🗑</button>
+      </div></td>
+    </tr>`;}).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun membre enregistré</td></tr>'}</tbody></table></div></div>`;
 }
 function openNewMembre() {
-  const nom  = prompt('Nom du membre :'); if (!nom) return;
-  const pren = prompt('Prénom :');        if (!pren) return;
-  const fonc = prompt('Fonction (ex: Pasteur, Visiteur...) :') || 'Membre';
-  const tel  = prompt('Téléphone :') || '';
-  saveMembre({ nom, prenom: pren, fonction: fonc, telephone: tel });
+  document.getElementById('modal-membre-title').textContent='Nouveau Membre';
+  document.getElementById('mb-key').value='';
+  ['mb-nom','mb-prenom','mb-fonction','mb-tel','mb-email','mb-resp'].forEach(id=>document.getElementById(id).value='');
+  openModal('modal-membre');
 }
-async function saveMembre(data) {
-  setFbStatus('saving');
-  const res = await fbPush('membres', data);
-  if (res?.name) CACHE.membres[res.name] = { ...data, _key: res.name };
-  setFbStatus('online');
-  showToast('✓ Membre enregistré');
-  showPage('membres');
+function editMembre(key) {
+  const m=C.membres[key]; if(!m) return;
+  document.getElementById('modal-membre-title').textContent='Modifier Membre';
+  document.getElementById('mb-key').value=key;
+  document.getElementById('mb-nom').value=m.nom||'';
+  document.getElementById('mb-prenom').value=m.prenom||'';
+  document.getElementById('mb-fonction').value=m.fonction||'';
+  document.getElementById('mb-tel').value=m.telephone||'';
+  document.getElementById('mb-email').value=m.email||'';
+  document.getElementById('mb-resp').value=m.responsabilites||'';
+  openModal('modal-membre');
+}
+async function saveMembre() {
+  const nom=document.getElementById('mb-nom').value.trim(), prenom=document.getElementById('mb-prenom').value.trim();
+  if(!nom||!prenom){showToast('Nom et prénom obligatoires','rouge');return;}
+  const btn=document.getElementById('btn-save-membre');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
+  const key=document.getElementById('mb-key').value;
+  const data={nom,prenom,fonction:document.getElementById('mb-fonction').value,telephone:document.getElementById('mb-tel').value,email:document.getElementById('mb-email').value,responsabilites:document.getElementById('mb-resp').value,token:key?(C.membres[key]?.token||genToken()):genToken(),date_integration:today()};
+  if(key){ await fbSet(`membres/${key}`,data); C.membres[key]={...data,_key:key}; }
+  else { const res=await fbPush('membres',data); if(res?.name) C.membres[res.name]={...data,_key:res.name}; }
+  btn.innerHTML='✔ Enregistrer'; btn.disabled=false; setFbStatus('online');
+  closeModal('modal-membre'); showToast('✓ Membre enregistré — lien généré'); showPage('membres');
 }
 async function deleteMembre(key) {
-  if (!confirm('Supprimer ce membre ?')) return;
-  await fbDelete(`membres/${key}`);
-  delete CACHE.membres[key];
-  showToast('Membre supprimé');
-  showPage('membres');
+  if(!confirm('Supprimer ce membre ?')) return;
+  await fbDelete(`membres/${key}`); delete C.membres[key];
+  showToast('Membre supprimé','rouge'); showPage('membres');
 }
 
 // ===== SPONSORS =====
 function renderSponsors() {
-  const list = arr(CACHE.sponsors);
-  return `<div class="card"><div class="card-title"><span>🤝</span> Sponsors & Partenaires</div>
+  const list=arr(C.sponsors);
+  const baseUrl=window.location.href.split('?')[0];
+  return `<div class="card"><div class="card-title">🤝 Sponsors & Partenaires</div>
   <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..."><button class="btn btn-primary" onclick="openNewSponsor()">+ Ajouter</button></div>
-  <div class="table-wrapper"><table><thead><tr><th>Sponsor</th><th>Type</th><th>Téléphone</th><th>Email</th><th>Actions</th></tr></thead>
-  <tbody>${list.length ? list.map(s=>`<tr><td><div style="font-weight:600">${s.nom||''}</div><div style="font-size:11px;color:var(--gris-texte)">${s.organisation||''}</div></td><td><span class="badge-status badge-actif">${s.type||'–'}</span></td><td>${s.telephone||'–'}</td><td>${s.email||'–'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteSponsor('${s._key}')">🗑</button></td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun sponsor enregistré</td></tr>'}</tbody></table></div></div>`;
+  <div class="table-wrapper"><table><thead><tr><th>Sponsor</th><th>Type</th><th>Téléphone</th><th>Portail</th><th>Actions</th></tr></thead>
+  <tbody>${list.length?list.map(s=>{
+    const lien=s.token?`${baseUrl}?sponsor=${s.token}`:'';
+    return `<tr>
+      <td><div style="font-weight:600">${s.nom||''}</div><div style="font-size:11px;color:var(--gris-texte)">${s.organisation||''}</div></td>
+      <td><span class="badge-status badge-actif">${s.type||'–'}</span></td>
+      <td>${s.telephone||'–'}</td>
+      <td>${lien?`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-or btn-sm" onclick="copierTexte('${lien}')">🔗 Copier lien</button></div>`:'–'}</td>
+      <td><div class="actions-cell">
+        <button class="btn btn-ghost btn-sm" onclick="editSponsor('${s._key}')">✏</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSponsor('${s._key}')">🗑</button>
+      </div></td>
+    </tr>`;}).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun sponsor enregistré</td></tr>'}</tbody></table></div></div>`;
 }
 function openNewSponsor() {
-  const nom = prompt('Nom du sponsor :'); if (!nom) return;
-  const type = prompt('Type (Individu / Église / Entreprise / ONG / Fondation) :') || 'Individu';
-  const tel  = prompt('Téléphone :') || '';
-  const email= prompt('Email :') || '';
-  const org  = prompt('Organisation :') || '';
-  saveSponsor({ nom, type, telephone: tel, email, organisation: org, date_adhesion: new Date().toISOString().split('T')[0] });
+  document.getElementById('modal-sponsor-title').textContent='Nouveau Sponsor';
+  document.getElementById('sp-key').value='';
+  ['sp-nom','sp-org','sp-tel','sp-email','sp-adresse'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sp-type').value='Individu';
+  openModal('modal-sponsor');
 }
-async function saveSponsor(data) {
-  setFbStatus('saving');
-  const res = await fbPush('sponsors', data);
-  if (res?.name) CACHE.sponsors[res.name] = { ...data, _key: res.name };
-  setFbStatus('online');
-  showToast('✓ Sponsor enregistré');
-  showPage('sponsors');
+function editSponsor(key) {
+  const s=C.sponsors[key]; if(!s) return;
+  document.getElementById('modal-sponsor-title').textContent='Modifier Sponsor';
+  document.getElementById('sp-key').value=key;
+  document.getElementById('sp-nom').value=s.nom||'';
+  document.getElementById('sp-org').value=s.organisation||'';
+  document.getElementById('sp-tel').value=s.telephone||'';
+  document.getElementById('sp-email').value=s.email||'';
+  document.getElementById('sp-adresse').value=s.adresse||'';
+  document.getElementById('sp-type').value=s.type||'Individu';
+  openModal('modal-sponsor');
+}
+async function saveSponsor() {
+  const nom=document.getElementById('sp-nom').value.trim(), tel=document.getElementById('sp-tel').value.trim();
+  if(!nom){showToast('Nom obligatoire','rouge');return;}
+  const btn=document.getElementById('btn-save-sponsor');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
+  const key=document.getElementById('sp-key').value;
+  const data={nom,type:document.getElementById('sp-type').value,organisation:document.getElementById('sp-org').value,telephone:tel,email:document.getElementById('sp-email').value,adresse:document.getElementById('sp-adresse').value,token:key?(C.sponsors[key]?.token||genToken()):genToken(),date_adhesion:today()};
+  if(key){ await fbSet(`sponsors/${key}`,data); C.sponsors[key]={...data,_key:key}; }
+  else { const res=await fbPush('sponsors',data); if(res?.name) C.sponsors[res.name]={...data,_key:res.name}; }
+  btn.innerHTML='✔ Enregistrer'; btn.disabled=false; setFbStatus('online');
+  closeModal('modal-sponsor'); showToast('✓ Sponsor enregistré — lien portail généré','or'); showPage('sponsors');
 }
 async function deleteSponsor(key) {
-  if (!confirm('Supprimer ce sponsor ?')) return;
-  await fbDelete(`sponsors/${key}`);
-  delete CACHE.sponsors[key];
-  showToast('Sponsor supprimé');
-  showPage('sponsors');
+  if(!confirm('Supprimer ce sponsor ?')) return;
+  await fbDelete(`sponsors/${key}`); delete C.sponsors[key];
+  showToast('Sponsor supprimé','rouge'); showPage('sponsors');
 }
 
 // ===== DONS =====
 function renderDons() {
-  const list = arr(CACHE.dons).sort((a,b)=>b.date>a.date?1:-1);
-  return `<div class="card"><div class="card-title"><span>💰</span> Dons Reçus</div>
+  const list=arr(C.dons).sort((a,b)=>b.date>a.date?1:-1);
+  return `<div class="card"><div class="card-title">💰 Dons Reçus</div>
   <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..."><button class="btn btn-or" onclick="openNewDon()">+ Enregistrer un don</button></div>
   <div class="table-wrapper"><table><thead><tr><th>N° Reçu</th><th>Date</th><th>Sponsor</th><th>Type</th><th>Montant</th><th>Actions</th></tr></thead>
-  <tbody>${list.length ? list.map(d=>`<tr><td><strong>${d.recu||'–'}</strong></td><td>${d.date}</td><td>${d.sponsor||'–'}</td><td><span class="badge-status badge-actif">${d.type||'–'}</span></td><td style="font-weight:700;color:var(--vert)">${fmtHTG(d.montant)}</td><td><button class="btn btn-danger btn-sm" onclick="deleteDon('${d._key}')">🗑</button></td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun don enregistré</td></tr>'}</tbody></table></div>
+  <tbody>${list.length?list.map(d=>`<tr>
+    <td><strong>${d.recu||'–'}</strong></td><td>${d.date||''}</td><td>${d.sponsor||'–'}</td>
+    <td><span class="badge-status badge-actif">${d.type||'–'}</span></td>
+    <td style="font-weight:700;color:var(--vert)">${fmtHTG(d.montant)}</td>
+    <td><div class="actions-cell">
+      <button class="btn btn-primary btn-sm" onclick="afficherMemo('${d._key}')">📲 Mémo</button>
+      <button class="btn btn-ghost btn-sm" onclick="editDon('${d._key}')">✏</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteDon('${d._key}')">🗑</button>
+    </div></td>
+  </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun don enregistré</td></tr>'}</tbody></table></div>
   <div style="text-align:right;padding-top:12px;font-size:15px;font-weight:700;color:var(--vert)">Total : ${fmtHTG(totalDons())}</div></div>`;
 }
 function openNewDon() {
-  const sel = document.getElementById('d-sponsor');
-  sel.innerHTML = '<option value="">-- Sélectionner --</option>' + arr(CACHE.sponsors).map(s=>`<option>${s.nom}</option>`).join('');
-  document.getElementById('d-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-don-title').textContent='Nouveau Don';
+  document.getElementById('d-key').value='';
+  document.getElementById('d-date').value=today();
   document.getElementById('d-montant').value='';
   document.getElementById('d-recu').value='';
   document.getElementById('d-desc').value='';
+  const sel=document.getElementById('d-sponsor');
+  sel.innerHTML='<option value="">-- Sélectionner --</option>'+arr(C.sponsors).map(s=>`<option>${s.nom}</option>`).join('');
+  openModal('modal-don');
+}
+function editDon(key) {
+  const d=C.dons[key]; if(!d) return;
+  document.getElementById('modal-don-title').textContent='Modifier Don';
+  document.getElementById('d-key').value=key;
+  document.getElementById('d-date').value=d.date||'';
+  document.getElementById('d-montant').value=d.montant||'';
+  document.getElementById('d-recu').value=d.recu||'';
+  document.getElementById('d-desc').value=d.description||'';
+  document.getElementById('d-type').value=d.type||'Argent';
+  const sel=document.getElementById('d-sponsor');
+  sel.innerHTML='<option value="">-- Sélectionner --</option>'+arr(C.sponsors).map(s=>`<option${s.nom===d.sponsor?' selected':''}>${s.nom}</option>`).join('');
   openModal('modal-don');
 }
 async function saveDon() {
-  const montant = parseFloat(document.getElementById('d-montant').value)||0;
-  const sponsor = document.getElementById('d-sponsor').value;
-  if (!sponsor||montant<=0) { showToast('Sponsor et montant obligatoires','rouge'); return; }
-  const btn = document.getElementById('btn-save-don');
-  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
-  setFbStatus('saving');
-  const data = {
-    date:    document.getElementById('d-date').value,
-    sponsor, montant,
-    type:    document.getElementById('d-type').value,
-    recu:    document.getElementById('d-recu').value || `RC-${Date.now()}`,
-    description: document.getElementById('d-desc').value
-  };
-  const res = await fbPush('dons', data);
-  if (res?.name) CACHE.dons[res.name] = { ...data, _key: res.name };
-  btn.innerHTML='💰 Enregistrer le don'; btn.disabled=false;
-  setFbStatus('online');
-  closeModal('modal-don');
-  showToast('✓ Don enregistré dans Firebase');
-  showPage('dons');
+  const montant=parseFloat(document.getElementById('d-montant').value)||0;
+  const sponsor=document.getElementById('d-sponsor').value;
+  if(!sponsor||montant<=0){showToast('Sponsor et montant obligatoires','rouge');return;}
+  const btn=document.getElementById('btn-save-don');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
+  const key=document.getElementById('d-key').value;
+  const data={date:document.getElementById('d-date').value,sponsor,montant,type:document.getElementById('d-type').value,recu:document.getElementById('d-recu').value||'RC-'+Date.now(),description:document.getElementById('d-desc').value};
+  if(key){ await fbSet(`dons/${key}`,data); C.dons[key]={...data,_key:key}; }
+  else { const res=await fbPush('dons',data); if(res?.name) C.dons[res.name]={...data,_key:res.name}; }
+  btn.innerHTML='💰 Enregistrer'; btn.disabled=false; setFbStatus('online');
+  closeModal('modal-don'); showToast('✓ Don enregistré'); showPage('dons');
 }
 async function deleteDon(key) {
-  if (!confirm('Supprimer ce don ?')) return;
-  await fbDelete(`dons/${key}`);
-  delete CACHE.dons[key];
-  showToast('Don supprimé');
-  showPage('dons');
+  if(!confirm('Supprimer ce don ?')) return;
+  await fbDelete(`dons/${key}`); delete C.dons[key];
+  showToast('Don supprimé','rouge'); showPage('dons');
+}
+
+// ===== MÉMO WHATSAPP =====
+function afficherMemo(key) {
+  const d=C.dons[key]; if(!d) return;
+  const sp=arr(C.sponsors).find(s=>s.nom===d.sponsor);
+  const p=C.parametres;
+  const nomMin=p.nom||'Ministère Tabita';
+  const tel=sp?.telephone||'';
+  const nomSp=d.sponsor||'Cher(e) Sponsor';
+  const texte=`Cher(e) ${nomSp},
+
+Au nom du ${nomMin}, nous vous adressons nos plus sincères remerciements pour votre généreux don de ${fmtHTG(d.montant)} reçu le ${d.date||today()}.
+
+Votre soutien fidèle nous permet de continuer notre mission auprès des plus vulnérables — veuves, personnes âgées, malades et abandonnés.
+
+Que Dieu vous bénisse abondamment pour votre générosité et votre engagement envers Son œuvre.
+
+Avec reconnaissance,
+${nomMin}
+${p.telephone||''}`;
+  document.getElementById('memo-info').innerHTML=`📲 Sponsor : <strong>${nomSp}</strong> &nbsp;|&nbsp; Tél : <strong>${tel||'Non renseigné'}</strong>`;
+  document.getElementById('memo-texte').textContent=texte;
+  MEMO_DATA={tel,texte,nomSp};
+  openModal('modal-memo');
+}
+function envoyerWhatsapp() {
+  if(!MEMO_DATA.tel){showToast('Numéro de téléphone non renseigné pour ce sponsor','rouge');return;}
+  const tel=MEMO_DATA.tel.replace(/\D/g,'');
+  const url=`https://wa.me/${tel}?text=${encodeURIComponent(MEMO_DATA.texte)}`;
+  window.open(url,'_blank');
+}
+function envoyerSMS() {
+  if(!MEMO_DATA.tel){showToast('Numéro de téléphone non renseigné pour ce sponsor','rouge');return;}
+  const tel=MEMO_DATA.tel.replace(/\D/g,'');
+  const url=`sms:${tel}?body=${encodeURIComponent(MEMO_DATA.texte)}`;
+  window.open(url,'_blank');
+}
+function copierMemo() {
+  navigator.clipboard.writeText(MEMO_DATA.texte).then(()=>showToast('✓ Texte copié !'));
+}
+function copierTexte(txt) {
+  navigator.clipboard.writeText(txt).then(()=>showToast('✓ Lien copié !'));
 }
 
 // ===== DÉPENSES =====
 function renderDepenses() {
-  const list = arr(CACHE.depenses).sort((a,b)=>b.date>a.date?1:-1);
-  return `<div class="card"><div class="card-title"><span>🧾</span> Dépenses</div>
-  <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..."><button class="btn btn-danger" onclick="openNewDepense()">+ Enregistrer une dépense</button></div>
-  <div class="table-wrapper"><table><thead><tr><th>Date</th><th>Catégorie</th><th>Bénéficiaire</th><th>Montant</th><th>Justification</th><th></th></tr></thead>
-  <tbody>${list.length ? list.map(d=>`<tr><td>${d.date}</td><td>${d.categorie||'–'}</td><td>${d.beneficiaire||'–'}</td><td style="font-weight:700;color:var(--rouge)">${fmtHTG(d.montant)}</td><td style="font-size:12px">${d.justification||'–'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteDepense('${d._key}')">🗑</button></td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucune dépense enregistrée</td></tr>'}</tbody></table></div>
+  const list=arr(C.depenses).sort((a,b)=>b.date>a.date?1:-1);
+  return `<div class="card"><div class="card-title">🧾 Dépenses</div>
+  <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..."><button class="btn btn-danger" onclick="openNewDepense()">+ Enregistrer</button></div>
+  <div class="table-wrapper"><table><thead><tr><th>Date</th><th>Catégorie</th><th>Bénéficiaire</th><th>Montant</th><th>Justification</th><th>Actions</th></tr></thead>
+  <tbody>${list.length?list.map(d=>`<tr>
+    <td>${d.date||''}</td><td>${d.categorie||'–'}</td><td>${d.beneficiaire||'–'}</td>
+    <td style="font-weight:700;color:var(--rouge)">${fmtHTG(d.montant)}</td>
+    <td style="font-size:12px">${d.justification||'–'}</td>
+    <td><div class="actions-cell">
+      <button class="btn btn-ghost btn-sm" onclick="editDepense('${d._key}')">✏</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteDepense('${d._key}')">🗑</button>
+    </div></td>
+  </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucune dépense enregistrée</td></tr>'}</tbody></table></div>
   <div style="text-align:right;padding-top:12px;font-size:15px;font-weight:700;color:var(--rouge)">Total : ${fmtHTG(totalDepenses())}</div></div>`;
 }
 function openNewDepense() {
-  const sel = document.getElementById('dep-benef');
-  sel.innerHTML = '<option value="">-- Optionnel --</option>' + arr(CACHE.beneficiaires).map(b=>`<option>${b.prenom} ${b.nom}</option>`).join('');
-  document.getElementById('dep-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-dep-title').textContent='Nouvelle Dépense';
+  document.getElementById('dep-key').value='';
+  document.getElementById('dep-date').value=today();
   document.getElementById('dep-montant').value='';
   document.getElementById('dep-just').value='';
+  const sel=document.getElementById('dep-benef');
+  sel.innerHTML='<option value="">-- Optionnel --</option>'+arr(C.beneficiaires).map(b=>`<option>${b.prenom||''} ${b.nom||''}</option>`).join('');
+  openModal('modal-depense');
+}
+function editDepense(key) {
+  const d=C.depenses[key]; if(!d) return;
+  document.getElementById('modal-dep-title').textContent='Modifier Dépense';
+  document.getElementById('dep-key').value=key;
+  document.getElementById('dep-date').value=d.date||'';
+  document.getElementById('dep-montant').value=d.montant||'';
+  document.getElementById('dep-just').value=d.justification||'';
+  document.getElementById('dep-cat').value=d.categorie||'Alimentation';
+  const sel=document.getElementById('dep-benef');
+  sel.innerHTML='<option value="">-- Optionnel --</option>'+arr(C.beneficiaires).map(b=>`<option${(b.prenom+' '+b.nom)===d.beneficiaire?' selected':''}>${b.prenom||''} ${b.nom||''}</option>`).join('');
   openModal('modal-depense');
 }
 async function saveDepense() {
-  const montant = parseFloat(document.getElementById('dep-montant').value)||0;
-  if (montant<=0) { showToast('Montant obligatoire','rouge'); return; }
-  const btn = document.getElementById('btn-save-dep');
-  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
-  setFbStatus('saving');
-  const data = {
-    date:          document.getElementById('dep-date').value,
-    categorie:     document.getElementById('dep-cat').value,
-    montant,
-    beneficiaire:  document.getElementById('dep-benef').value,
-    justification: document.getElementById('dep-just').value
-  };
-  const res = await fbPush('depenses', data);
-  if (res?.name) CACHE.depenses[res.name] = { ...data, _key: res.name };
-  btn.innerHTML='🧾 Enregistrer'; btn.disabled=false;
-  setFbStatus('online');
-  closeModal('modal-depense');
-  showToast('✓ Dépense enregistrée dans Firebase');
-  showPage('depenses');
+  const montant=parseFloat(document.getElementById('dep-montant').value)||0;
+  if(montant<=0){showToast('Montant obligatoire','rouge');return;}
+  const btn=document.getElementById('btn-save-dep');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
+  const key=document.getElementById('dep-key').value;
+  const data={date:document.getElementById('dep-date').value,categorie:document.getElementById('dep-cat').value,montant,beneficiaire:document.getElementById('dep-benef').value,justification:document.getElementById('dep-just').value};
+  if(key){ await fbSet(`depenses/${key}`,data); C.depenses[key]={...data,_key:key}; }
+  else { const res=await fbPush('depenses',data); if(res?.name) C.depenses[res.name]={...data,_key:res.name}; }
+  btn.innerHTML='🧾 Enregistrer'; btn.disabled=false; setFbStatus('online');
+  closeModal('modal-depense'); showToast('✓ Dépense enregistrée'); showPage('depenses');
 }
 async function deleteDepense(key) {
-  if (!confirm('Supprimer cette dépense ?')) return;
-  await fbDelete(`depenses/${key}`);
-  delete CACHE.depenses[key];
-  showToast('Dépense supprimée');
-  showPage('depenses');
+  if(!confirm('Supprimer cette dépense ?')) return;
+  await fbDelete(`depenses/${key}`); delete C.depenses[key];
+  showToast('Dépense supprimée','rouge'); showPage('depenses');
 }
 
 // ===== INVENTAIRE =====
-const INV_DEFAULT = [
-  {nom:'Matelas',icon:'🛏',stock:0,alerte:5},
-  {nom:'Fauteuils roulants',icon:'♿',stock:0,alerte:2},
-  {nom:'Béquilles',icon:'🩼',stock:0,alerte:3},
-  {nom:'Riz (kg)',icon:'🍚',stock:0,alerte:20},
-  {nom:'Haricots (kg)',icon:'🫘',stock:0,alerte:15},
-  {nom:'Huile (L)',icon:'🫙',stock:0,alerte:10},
-  {nom:'Vêtements',icon:'👕',stock:0,alerte:20},
-  {nom:'Médicaments',icon:'💊',stock:0,alerte:25}
+const INV_DEFAUT=[
+  {nom:'Matelas',icon:'🛏',stock:0,alerte:5},{nom:'Fauteuils roulants',icon:'♿',stock:0,alerte:2},
+  {nom:'Béquilles',icon:'🩼',stock:0,alerte:3},{nom:'Riz (kg)',icon:'🍚',stock:0,alerte:20},
+  {nom:'Haricots (kg)',icon:'🫘',stock:0,alerte:15},{nom:'Huile (L)',icon:'🫙',stock:0,alerte:10},
+  {nom:'Vêtements',icon:'👕',stock:0,alerte:20},{nom:'Médicaments',icon:'💊',stock:0,alerte:25}
 ];
 function renderInventaire() {
-  let list = arr(CACHE.inventaire);
-  if (!list.length) list = INV_DEFAULT;
-  return `<div class="card"><div class="card-title"><span>📦</span> Inventaire</div>
+  let list=arr(C.inventaire); if(!list.length) list=INV_DEFAUT;
+  return `<div class="card"><div class="card-title">📦 Inventaire</div>
   <div class="inv-grid">${list.map(item=>`
     <div class="inv-card ${item.stock<=item.alerte?'low':''}">
       <div class="inv-icon">${item.icon||'📦'}</div>
@@ -1055,159 +1164,291 @@ function renderInventaire() {
       </div>
     </div>`).join('')}</div></div>`;
 }
-async function ajusterStock(key, nom, stock, delta) {
-  const nouveau = Math.max(0, (parseInt(stock)||0) + delta);
+async function ajusterStock(key,nom,stock,delta) {
+  const nouveau=Math.max(0,(parseInt(stock)||0)+delta);
   setFbStatus('saving');
-  if (CACHE.inventaire[key]) {
-    CACHE.inventaire[key].stock = nouveau;
-    await fbSet(`inventaire/${key}`, CACHE.inventaire[key]);
-  } else {
-    const item = INV_DEFAULT.find(i=>i.nom===nom) || { nom, icon:'📦', alerte:5 };
-    item.stock = nouveau;
-    const res = await fbPush('inventaire', item);
-    if (res?.name) CACHE.inventaire[res.name] = { ...item, _key: res.name };
+  if(C.inventaire[key]){ C.inventaire[key].stock=nouveau; await fbSet(`inventaire/${key}`,C.inventaire[key]); }
+  else {
+    const item=INV_DEFAUT.find(i=>i.nom===nom)||{nom,icon:'📦',alerte:5};
+    item.stock=nouveau;
+    const res=await fbPush('inventaire',item); if(res?.name) C.inventaire[res.name]={...item,_key:res.name};
   }
-  setFbStatus('online');
-  showPage('inventaire');
+  setFbStatus('online'); showPage('inventaire');
 }
 
 // ===== PROJETS =====
 function renderProjets() {
-  const list = arr(CACHE.projets);
-  const statusColors = { Terminé:'badge-faible','En cours':'badge-moyen','En attente':'badge-inactif' };
-  return `<div class="card"><div class="card-title"><span>🏗</span> Projets d'Assistance</div>
+  const list=arr(C.projets);
+  const statusColors={Terminé:'badge-faible','En cours':'badge-moyen','En attente':'badge-inactif'};
+  return `<div class="card"><div class="card-title">🏗 Projets d'Assistance</div>
   <div class="toolbar"><button class="btn btn-primary" onclick="openNewProjet()">+ Nouveau projet</button></div>
-  ${list.length ? list.map(p=>{
-    const pct = p.budget>0 ? Math.round((p.depense||0)/p.budget*100) : 0;
+  ${list.length?list.map(p=>{
+    const pct=p.budget>0?Math.round((p.depense||0)/p.budget*100):0;
     return `<div class="projet-card">
-      <div class="p-header"><div class="p-name">${p.nom}</div><span class="badge-status ${statusColors[p.statut]||''}">${p.statut||'–'}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <div style="font-size:15px;font-weight:700">${p.nom||'–'}</div>
+        <span class="badge-status ${statusColors[p.statut]||''}">${p.statut||'–'}</span>
+      </div>
       <div style="font-size:11px;color:var(--gris-texte)">Du ${p.date_debut||'–'} au ${p.date_fin||'–'}</div>
       <div class="projet-montants">
         <div><div class="pm-label">Budget</div><div class="pm-val">${fmtHTG(p.budget||0)}</div></div>
         <div><div class="pm-label">Collecté</div><div class="pm-val" style="color:var(--or)">${fmtHTG(p.montant_collecte||0)}</div></div>
         <div><div class="pm-label">Dépensé</div><div class="pm-val" style="color:var(--rouge)">${fmtHTG(p.depense||0)}</div></div>
       </div>
-      <div style="font-size:12px;margin-bottom:4px;font-weight:600">Progression : ${pct}%</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px">Progression : ${pct}%</div>
       <div class="finance-bar"><div class="finance-fill" style="width:${Math.min(pct,100)}%"></div></div>
-      <div style="margin-top:8px"><button class="btn btn-danger btn-sm" onclick="deleteProjet('${p._key}')">🗑 Supprimer</button></div>
-    </div>`;}).join('') : '<div class="alert alert-info">Aucun projet enregistré.</div>'}
+      <div class="actions-cell" style="margin-top:10px">
+        <button class="btn btn-ghost btn-sm" onclick="editProjet('${p._key}')">✏ Modifier</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProjet('${p._key}')">🗑</button>
+      </div>
+    </div>`;}).join(''):'<div class="alert alert-info">Aucun projet enregistré.</div>'}
   </div>`;
 }
 function openNewProjet() {
-  const nom     = prompt('Nom du projet :');    if (!nom) return;
-  const budget  = parseFloat(prompt('Budget prévu (HTG) :'))||0;
-  const statut  = prompt('Statut (En cours / En attente / Terminé) :') || 'En attente';
-  const debut   = prompt('Date début (AAAA-MM-JJ) :') || new Date().toISOString().split('T')[0];
-  const fin     = prompt('Date fin (AAAA-MM-JJ) :') || '';
-  saveProjet({ nom, budget, montant_collecte:0, depense:0, statut, date_debut:debut, date_fin:fin });
+  document.getElementById('modal-projet-title').textContent='Nouveau Projet';
+  document.getElementById('pr-key').value='';
+  ['pr-nom','pr-desc','pr-budget','pr-collecte','pr-depense','pr-debut','pr-fin'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pr-statut').value='En attente';
+  openModal('modal-projet');
 }
-async function saveProjet(data) {
-  setFbStatus('saving');
-  const res = await fbPush('projets', data);
-  if (res?.name) CACHE.projets[res.name] = { ...data, _key: res.name };
-  setFbStatus('online');
-  showToast('✓ Projet enregistré');
-  showPage('projets');
+function editProjet(key) {
+  const p=C.projets[key]; if(!p) return;
+  document.getElementById('modal-projet-title').textContent='Modifier Projet';
+  document.getElementById('pr-key').value=key;
+  document.getElementById('pr-nom').value=p.nom||'';
+  document.getElementById('pr-desc').value=p.description||'';
+  document.getElementById('pr-budget').value=p.budget||'';
+  document.getElementById('pr-collecte').value=p.montant_collecte||'';
+  document.getElementById('pr-depense').value=p.depense||'';
+  document.getElementById('pr-statut').value=p.statut||'En attente';
+  document.getElementById('pr-debut').value=p.date_debut||'';
+  document.getElementById('pr-fin').value=p.date_fin||'';
+  openModal('modal-projet');
+}
+async function saveProjet() {
+  const nom=document.getElementById('pr-nom').value.trim();
+  if(!nom){showToast('Nom du projet obligatoire','rouge');return;}
+  const btn=document.getElementById('btn-save-projet');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
+  const key=document.getElementById('pr-key').value;
+  const data={nom,description:document.getElementById('pr-desc').value,budget:parseFloat(document.getElementById('pr-budget').value)||0,montant_collecte:parseFloat(document.getElementById('pr-collecte').value)||0,depense:parseFloat(document.getElementById('pr-depense').value)||0,statut:document.getElementById('pr-statut').value,date_debut:document.getElementById('pr-debut').value,date_fin:document.getElementById('pr-fin').value};
+  if(key){ await fbSet(`projets/${key}`,data); C.projets[key]={...data,_key:key}; }
+  else { const res=await fbPush('projets',data); if(res?.name) C.projets[res.name]={...data,_key:res.name}; }
+  btn.innerHTML='✔ Enregistrer'; btn.disabled=false; setFbStatus('online');
+  closeModal('modal-projet'); showToast('✓ Projet enregistré'); showPage('projets');
 }
 async function deleteProjet(key) {
-  if (!confirm('Supprimer ce projet ?')) return;
-  await fbDelete(`projets/${key}`);
-  delete CACHE.projets[key];
-  showToast('Projet supprimé');
-  showPage('projets');
+  if(!confirm('Supprimer ce projet ?')) return;
+  await fbDelete(`projets/${key}`); delete C.projets[key];
+  showToast('Projet supprimé','rouge'); showPage('projets');
 }
 
 // ===== RAPPORTS =====
 function renderRapports() {
-  return `<div class="card"><div class="card-title"><span>📊</span> Rapports</div>
+  return `<div class="card"><div class="card-title">📊 Rapports</div>
   <div class="rapport-grid">
-    <div class="rapport-btn" onclick="genRapport('journalier')"><div class="r-icon">📋</div><div class="r-name">Rapport journalier</div><div class="r-desc">Activités du jour</div></div>
-    <div class="rapport-btn" onclick="genRapport('mensuel')"><div class="r-icon">📆</div><div class="r-name">Rapport mensuel</div><div class="r-desc">Bilan du mois</div></div>
     <div class="rapport-btn" onclick="genRapport('finance')"><div class="r-icon">💰</div><div class="r-name">Rapport financier</div><div class="r-desc">Dons & dépenses</div></div>
     <div class="rapport-btn" onclick="genRapport('visites')"><div class="r-icon">🚗</div><div class="r-name">Rapport visites</div><div class="r-desc">Historique complet</div></div>
+    <div class="rapport-btn" onclick="genRapport('mensuel')"><div class="r-icon">📆</div><div class="r-name">Rapport mensuel</div><div class="r-desc">Bilan du mois</div></div>
     <div class="rapport-btn" onclick="genRapport('annuel')"><div class="r-icon">📈</div><div class="r-name">Rapport annuel</div><div class="r-desc">Bilan annuel</div></div>
     <div class="rapport-btn" onclick="genRapport('transparence')"><div class="r-icon">🌐</div><div class="r-name">Transparence</div><div class="r-desc">Rapport public</div></div>
+    <div class="rapport-btn" onclick="genRapport('sponsors')"><div class="r-icon">🤝</div><div class="r-name">Rapport sponsors</div><div class="r-desc">Par partenaire</div></div>
   </div>
   <div id="rapport-preview"></div></div>`;
 }
 function genRapport(type) {
-  const now = new Date().toLocaleDateString('fr-FR');
-  const titres = { journalier:'Rapport Journalier', mensuel:'Rapport Mensuel', finance:'Rapport Financier', visites:'Rapport des Visites', annuel:'Rapport Annuel', transparence:'Page de Transparence' };
-  const preview = document.getElementById('rapport-preview');
-  if (!preview) return;
-  preview.innerHTML = `
-  <div class="card" style="margin-top:16px;border:2px solid var(--vert-light)">
-    <div style="text-align:center;margin-bottom:16px"><div style="font-size:36px">✝</div><h2 style="color:var(--vert)">MINISTÈRE TABITA</h2><p style="color:var(--gris-texte);font-style:italic">Honorer ceux qui ont servi</p><p style="font-size:12px;color:var(--gris-texte);margin-top:4px">${titres[type]} – ${now}</p></div>
+  const p=C.parametres, nom=p.nom||'Ministère Tabita', now=new Date().toLocaleDateString('fr-FR');
+  const titres={finance:'Rapport Financier',visites:'Rapport des Visites',mensuel:'Rapport Mensuel',annuel:'Rapport Annuel',transparence:'Page de Transparence',sponsors:'Rapport Sponsors'};
+  const el=document.getElementById('rapport-preview'); if(!el) return;
+  el.innerHTML=`<div class="card" style="margin-top:16px;border:2px solid var(--vert-light)">
+    <div style="text-align:center;margin-bottom:16px"><div style="font-size:36px">✝</div><h2 style="color:var(--vert)">${nom}</h2><p style="color:var(--gris-texte);font-style:italic">${p.slogan||'Honorer ceux qui ont servi'}</p><p style="font-size:12px;color:var(--gris-texte);margin-top:4px">${titres[type]} – ${now}</p></div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">Bénéficiaires</div><div class="stat-val">${arr(CACHE.beneficiaires).length}</div></div>
-      <div class="stat-card or"><div class="stat-label">Visites</div><div class="stat-val">${arr(CACHE.visites).length}</div></div>
+      <div class="stat-card"><div class="stat-label">Bénéficiaires</div><div class="stat-val">${arr(C.beneficiaires).length}</div></div>
+      <div class="stat-card or"><div class="stat-label">Visites</div><div class="stat-val">${arr(C.visites).length}</div></div>
       <div class="stat-card"><div class="stat-label">Total dons</div><div class="stat-val" style="font-size:16px">${fmtHTG(totalDons())}</div></div>
       <div class="stat-card rouge"><div class="stat-label">Dépenses</div><div class="stat-val" style="font-size:16px">${fmtHTG(totalDepenses())}</div></div>
     </div>
-    <div style="text-align:center;padding:12px 0;font-size:15px;font-weight:700;color:var(--vert)">Solde : ${fmtHTG(totalDons()-totalDepenses())}</div>
+    <div style="text-align:right;font-size:15px;font-weight:700;color:var(--vert);padding:10px 0">Solde : ${fmtHTG(totalDons()-totalDepenses())}</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-      <button class="btn btn-primary" onclick="showToast('📄 Export PDF à venir...')">🖨 PDF</button>
-      <button class="btn btn-ghost" onclick="showToast('📊 Export Excel à venir...')">📊 Excel</button>
+      <button class="btn btn-primary" onclick="imprimerRapport()">🖨 Imprimer</button>
     </div>
   </div>`;
   showToast(`✓ ${titres[type]} généré`);
 }
+function imprimerRapport() { window.print(); }
 
 // ===== NOTIFICATIONS =====
 function renderNotifications() {
-  const list = arr(CACHE.notifications);
-  return `<div class="card"><div class="card-title"><span>🔔</span> Notifications</div>
-  ${list.length ? list.map(n=>`
+  const list=arr(C.notifications);
+  return `<div class="card"><div class="card-title">🔔 Notifications</div>
+  ${list.length?list.map(n=>`
     <div class="alert alert-${n.niveau==='danger'?'danger':'warning'}" style="margin-bottom:10px">
-      <div style="flex:1"><div style="font-weight:700">${n.titre}</div><div style="font-size:12px">${n.message}</div><div style="font-size:11px;color:var(--gris-texte);margin-top:4px">${n.date||''}</div></div>
+      <div style="flex:1"><div style="font-weight:700">${n.titre||''}</div><div style="font-size:12px">${n.message||''}</div><div style="font-size:11px;color:var(--gris-texte);margin-top:4px">${n.date||''}</div></div>
       ${!n.lu?`<button class="btn btn-ghost btn-sm" onclick="markRead('${n._key}')">✓ Lu</button>`:'<span style="font-size:12px;color:var(--gris-texte)">✓</span>'}
-    </div>`).join('') : '<div class="alert alert-success">✅ Aucune notification en attente.</div>'}
+    </div>`).join(''):'<div class="alert alert-success">✅ Aucune notification.</div>'}
   </div>`;
 }
 async function markRead(key) {
-  if (CACHE.notifications[key]) {
-    CACHE.notifications[key].lu = true;
-    await fbSet(`notifications/${key}`, CACHE.notifications[key]);
-  }
-  updateBadges();
-  showPage('notifications');
-  showToast('Notification marquée comme lue');
+  if(C.notifications[key]){ C.notifications[key].lu=true; await fbSet(`notifications/${key}`,C.notifications[key]); }
+  updateBadges(); showPage('notifications'); showToast('Lu');
 }
 
 // ===== PARAMÈTRES =====
 function renderParametres() {
-  return `<div class="card"><div class="card-title"><span>⚙</span> Paramètres du Système</div>
+  const p=C.parametres;
+  return `<div class="card"><div class="card-title">⚙ Paramètres du Système</div>
   <div class="form-grid">
     <div class="form-section-title">🏛 Informations du Ministère</div>
-    <div class="form-group"><label>Nom du ministère</label><input type="text" id="p-nom" value="Ministère Tabita"></div>
-    <div class="form-group"><label>Téléphone</label><input type="tel" id="p-tel" value="+509 XXXX XXXX"></div>
-    <div class="form-group"><label>Email</label><input type="email" id="p-email" value="info@ministeretabita.org"></div>
-    <div class="form-group"><label>Devise</label><select id="p-devise"><option>HTG – Gourde haïtienne</option><option>USD – Dollar américain</option></select></div>
-    <div class="form-group form-full"><label>Adresse</label><textarea id="p-adresse">Jérémie, Grand'Anse, Haïti</textarea></div>
+    <div class="form-group"><label>Nom du ministère</label><input type="text" id="p-nom" value="${p.nom||'Ministère Tabita'}"></div>
+    <div class="form-group"><label>Slogan</label><input type="text" id="p-slogan" value="${p.slogan||'Honorer ceux qui ont servi'}"></div>
+    <div class="form-group"><label>Téléphone</label><input type="tel" id="p-tel" value="${p.telephone||''}"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="p-email" value="${p.email||''}"></div>
+    <div class="form-group"><label>Devise</label><select id="p-devise"><option${p.devise==='HTG'?' selected':''}>HTG</option><option${p.devise==='USD'?' selected':''}>USD</option></select></div>
+    <div class="form-group"><label>Langue</label><select id="p-langue"><option${p.langue==='Français'?' selected':''}>Français</option><option${p.langue==='Kreyòl'?' selected':''}>Kreyòl</option></select></div>
+    <div class="form-group form-full"><label>Adresse</label><textarea id="p-adresse">${p.adresse||'Jérémie, Grand\'Anse, Haïti'}</textarea></div>
     <div class="form-section-title">🔥 Firebase</div>
-    <div class="form-group form-full">
-      <div class="alert alert-success">✅ Connecté à Firebase – ministere-tabitha-sgmt<br><small style="color:var(--gris-texte)">Base de données : ministere-tabitha-sgmt-default-rtdb</small></div>
-    </div>
+    <div class="form-group form-full"><div class="alert alert-success">✅ Connecté — ministere-tabitha-sgmt<br><small>DB : ministere-tabitha-sgmt-default-rtdb</small></div></div>
     <div class="form-section-title">🔐 Mon Compte</div>
-    <div class="form-group"><label>Email connecté</label><input type="email" value="${AUTH.email}" disabled></div>
-    <div class="form-group form-full"><button class="btn btn-primary" onclick="showToast('✓ Paramètres enregistrés')">💾 Enregistrer</button></div>
+    <div class="form-group"><label>Email connecté</label><input type="email" value="${AUTH.email||''}" disabled></div>
+    <div class="form-group form-full"><button class="btn btn-primary" onclick="saveParametres()" id="btn-save-param">💾 Enregistrer les paramètres</button></div>
   </div></div>`;
 }
+async function saveParametres() {
+  const btn=document.getElementById('btn-save-param');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
+  const data={
+    nom:     document.getElementById('p-nom').value.trim(),
+    slogan:  document.getElementById('p-slogan').value.trim(),
+    telephone:document.getElementById('p-tel').value.trim(),
+    email:   document.getElementById('p-email').value.trim(),
+    devise:  document.getElementById('p-devise').value,
+    langue:  document.getElementById('p-langue').value,
+    adresse: document.getElementById('p-adresse').value.trim()
+  };
+  await fbSet('parametres', data);
+  C.parametres=data;
+  appliquerParametres();
+  btn.innerHTML='💾 Enregistrer les paramètres'; btn.disabled=false; setFbStatus('online');
+  showToast('✓ Paramètres enregistrés et appliqués');
+}
 
-// ===== AUTO-LOGIN =====
+// ===== PORTAIL SPONSOR (vue publique) =====
+function renderPortailSponsor(token) {
+  const sp=arr(C.sponsors).find(s=>s.token===token);
+  const p=C.parametres, nomMin=p.nom||'Ministère Tabita';
+  document.getElementById('login-screen').style.display='none';
+  document.body.style.background='var(--gris-fond)';
+  const dons=arr(C.dons).filter(d=>d.sponsor===sp?.nom);
+  const totalSp=dons.reduce((s,d)=>s+(parseFloat(d.montant)||0),0);
+  document.body.innerHTML=`
+  <div style="max-width:600px;margin:0 auto;padding:20px">
+    <div style="text-align:center;background:var(--vert);color:#fff;padding:30px;border-radius:16px;margin-bottom:20px">
+      <div style="font-size:40px">✝</div>
+      <h1 style="font-size:20px;margin:8px 0">${nomMin}</h1>
+      <p style="font-size:13px;opacity:.8">${p.slogan||''}</p>
+      <p style="font-size:12px;margin-top:12px;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;display:inline-block">Portail Sponsor – ${sp?.nom||'Sponsor'}</p>
+    </div>
+    <div class="stats-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div class="stat-card"><div class="stat-label">Bénéficiaires</div><div class="stat-val">${arr(C.beneficiaires).length}</div></div>
+      <div class="stat-card or"><div class="stat-label">Visites effectuées</div><div class="stat-val">${arr(C.visites).length}</div></div>
+      <div class="stat-card"><div class="stat-label">Total dons reçus</div><div class="stat-val" style="font-size:16px">${fmtHTG(totalDons())}</div></div>
+      <div class="stat-card rouge"><div class="stat-label">Total dépenses</div><div class="stat-val" style="font-size:16px">${fmtHTG(totalDepenses())}</div></div>
+    </div>
+    <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
+      <div style="font-size:15px;font-weight:700;color:var(--vert);margin-bottom:12px">💰 Vos contributions</div>
+      <div style="font-size:22px;font-weight:700;color:var(--vert);margin-bottom:8px">${fmtHTG(totalSp)}</div>
+      ${dons.map(d=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gris-bord);font-size:13px"><span>${d.date} – ${d.type}</span><span style="font-weight:700;color:var(--vert)">${fmtHTG(d.montant)}</span></div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
+      <div style="font-size:15px;font-weight:700;color:var(--vert);margin-bottom:12px">🏗 Projets en cours</div>
+      ${arr(C.projets).filter(p=>p.statut==='En cours').map(p=>{
+        const pct=p.budget>0?Math.round((p.depense||0)/p.budget*100):0;
+        return `<div style="margin-bottom:12px"><div style="font-weight:600;font-size:13px">${p.nom}</div><div style="height:10px;background:var(--gris-bord);border-radius:5px;margin:6px 0;overflow:hidden"><div style="height:100%;width:${Math.min(pct,100)}%;background:var(--vert-clair);border-radius:5px"></div></div><div style="font-size:11px;color:var(--gris-texte)">${pct}% complété</div></div>`;}).join('') || '<p style="color:var(--gris-texte);font-size:13px">Aucun projet en cours.</p>'}
+    </div>
+    <div style="text-align:center;margin-top:20px;font-size:12px;color:var(--gris-texte)">Vue publique – données en lecture seule<br>${nomMin} © ${new Date().getFullYear()}</div>
+  </div>`;
+}
+
+// ===== ACCÈS MEMBRE (vue terrain) =====
+function renderAccesMembre(token) {
+  const mb=arr(C.membres).find(m=>m.token===token);
+  document.getElementById('login-screen').style.display='none';
+  document.body.innerHTML=`
+  <div style="max-width:600px;margin:0 auto;padding:20px">
+    <div style="background:var(--vert);color:#fff;padding:20px;border-radius:16px;margin-bottom:16px;text-align:center">
+      <div style="font-size:32px">✝</div>
+      <h2 style="font-size:16px;margin:6px 0">${C.parametres.nom||'Ministère Tabita'}</h2>
+      <p style="font-size:12px;opacity:.8">Accès membre – ${mb?.prenom||''} ${mb?.nom||''}</p>
+    </div>
+    <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
+      <div style="font-size:15px;font-weight:700;color:var(--vert);margin-bottom:14px">📝 Enregistrer une visite</div>
+      <div class="form-group"><label>Bénéficiaire *</label><select id="m-benef"><option value="">-- Sélectionner --</option>${arr(C.beneficiaires).map(b=>`<option>${b.prenom||''} ${b.nom||''}</option>`).join('')}</select></div>
+      <div class="form-group"><label>Date</label><input type="date" id="m-date" value="${today()}"></div>
+      <div class="form-group"><label>Activités réalisées</label>
+        <div class="checkbox-group" style="margin-top:6px">
+          <label><input type="checkbox" id="m-priere"> 🙏 Prière</label>
+          <label><input type="checkbox" id="m-cene"> 🍞 Sainte-Cène</label>
+          <label><input type="checkbox" id="m-bible"> 📖 Étude biblique</label>
+          <label><input type="checkbox" id="m-aliment"> 🍚 Distribution alimentaire</label>
+          <label><input type="checkbox" id="m-medical"> 💊 Assistance médicale</label>
+          <label><input type="checkbox" id="m-nettoyage"> 🧹 Nettoyage</label>
+        </div>
+      </div>
+      <div class="form-group"><label>État de santé</label><select id="m-sante"><option>Excellent</option><option>Bon</option><option>Passable</option><option>Mauvais</option><option>Critique</option></select></div>
+      <div class="form-group"><label>Rapport / Observations</label><textarea id="m-rapport" placeholder="État général, besoins observés..."></textarea></div>
+      <div class="form-group"><label>Besoin urgent</label><input type="text" id="m-besoin" placeholder="Médicaments, nourriture..."></div>
+      <button class="btn btn-primary btn-full" id="m-btn-save" onclick="saveVisiteMembre('${token}','${mb?.prenom||''} ${mb?.nom||''}')">✔ Soumettre la visite</button>
+    </div>
+    <div id="m-confirm" style="margin-top:16px"></div>
+  </div>`;
+}
+async function saveVisiteMembre(token, nomMembre) {
+  const benef=document.getElementById('m-benef').value;
+  const date=document.getElementById('m-date').value;
+  if(!benef||!date){alert('Bénéficiaire et date obligatoires');return;}
+  const btn=document.getElementById('m-btn-save');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
+  const activites=[];
+  if(document.getElementById('m-priere').checked)  activites.push('Prière');
+  if(document.getElementById('m-cene').checked)    activites.push('Sainte-Cène');
+  if(document.getElementById('m-bible').checked)   activites.push('Étude biblique');
+  if(document.getElementById('m-aliment').checked) activites.push('Distribution alimentaire');
+  if(document.getElementById('m-medical').checked) activites.push('Assistance médicale');
+  if(document.getElementById('m-nettoyage').checked)activites.push('Nettoyage');
+  const data={date,benef,activites,sante:document.getElementById('m-sante').value,rapport:document.getElementById('m-rapport').value,besoin:document.getElementById('m-besoin').value,membre:nomMembre};
+  await fbPush('visites',data);
+  btn.innerHTML='✔ Soumettre la visite'; btn.disabled=false;
+  document.getElementById('m-confirm').innerHTML=`<div class="alert alert-success">✅ Visite enregistrée avec succès ! Merci ${nomMembre}.</div>`;
+  ['m-rapport','m-besoin'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m-benef').value='';
+}
+
+// ===== INIT =====
 window.addEventListener('load', async () => {
-  const token = localStorage.getItem('sgmt_token');
-  const uid   = localStorage.getItem('sgmt_uid');
-  const email = localStorage.getItem('sgmt_email');
-  const nom   = localStorage.getItem('sgmt_nom');
-  if (token && uid) {
-    AUTH = { token, uid, email, nom: nom || email };
+  const params=new URLSearchParams(window.location.search);
+  const sponsorToken=params.get('sponsor');
+  const membreToken=params.get('membre');
+  if(sponsorToken||membreToken) {
+    // Charger données publiques sans auth
+    try {
+      const [b,sp,d,dep,v,pr,mb,param]=await Promise.all([
+        fbGet('beneficiaires'),fbGet('sponsors'),fbGet('dons'),fbGet('depenses'),
+        fbGet('visites'),fbGet('projets'),fbGet('membres'),fbGet('parametres')
+      ]);
+      C.beneficiaires=b||{}; C.sponsors=sp||{}; C.dons=d||{}; C.depenses=dep||{};
+      C.visites=v||{}; C.projets=pr||{}; C.membres=mb||{}; C.parametres=param||{};
+      if(sponsorToken) renderPortailSponsor(sponsorToken);
+      if(membreToken)  renderAccesMembre(membreToken);
+    } catch(e) { alert('Erreur de connexion Firebase.'); }
+    return;
+  }
+  const token=localStorage.getItem('sgmt_token');
+  if(token) {
+    AUTH={token,uid:localStorage.getItem('sgmt_uid'),email:localStorage.getItem('sgmt_email'),nom:localStorage.getItem('sgmt_nom')||''};
     lancerApp();
   }
 });
-window.addEventListener('keypress', e => {
-  if (e.key==='Enter' && document.getElementById('login-screen').style.display!=='none') doLogin();
-});
+window.addEventListener('keypress',e=>{if(e.key==='Enter'&&document.getElementById('login-screen')?.style.display!=='none') doLogin();});
 </script>
 </body>
 </html>
