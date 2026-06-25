@@ -1334,101 +1334,416 @@ async function saveParametres() {
   showToast('✓ Paramètres enregistrés et appliqués');
 }
 
-// ===== PORTAIL SPONSOR (vue publique) =====
+// ===== STYLES PORTAILS =====
+function portailStyles() {
+  return `<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#F5F5F5;color:#212121;font-size:14px}
+  .p-header{text-align:center;background:linear-gradient(160deg,#1B5E20,#4CAF50);color:#fff;padding:28px 20px;margin-bottom:16px}
+  .p-header .cross{font-size:38px}
+  .p-header h1{font-size:18px;font-weight:700;margin:6px 0}
+  .p-header p{font-size:12px;opacity:.8}
+  .p-badge{font-size:11px;margin-top:10px;background:rgba(255,255,255,.2);padding:5px 14px;border-radius:20px;display:inline-block}
+  .p-wrap{max-width:640px;margin:0 auto;padding:0 12px 30px}
+  .p-tabs{display:flex;background:#fff;border-bottom:2px solid #E8F5E9;overflow-x:auto;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .p-tab{flex:1;min-width:80px;padding:12px 8px;border:none;background:none;font-size:12px;font-weight:600;color:#616161;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;text-align:center}
+  .p-tab.active{color:#2E7D32;border-bottom-color:#2E7D32}
+  .p-section{display:none}.p-section.active{display:block}
+  .p-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 5px rgba(0,0,0,.08)}
+  .p-card-title{font-size:14px;font-weight:700;color:#2E7D32;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #E8F5E9;display:flex;align-items:center;gap:6px}
+  .p-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .p-stat{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 5px rgba(0,0,0,.08);border-left:4px solid #2E7D32}
+  .p-stat.or{border-left-color:#F9A825}.p-stat.rouge{border-left-color:#C62828}.p-stat.bleu{border-left-color:#0277BD}
+  .p-stat-label{font-size:10px;font-weight:700;color:#616161;text-transform:uppercase;letter-spacing:.4px}
+  .p-stat-val{font-size:20px;font-weight:700;color:#212121;margin-top:4px}
+  .p-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #E0E0E0;font-size:13px;gap:8px}
+  .p-row:last-child{border-bottom:none}
+  .p-row-left{flex:1}.p-row-right{font-weight:700;color:#2E7D32;white-space:nowrap}
+  .p-badge-stat{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+  .bc{background:#FFCDD2;color:#B71C1C}.bm{background:#FFF9C4;color:#827717}
+  .bv{background:#C8E6C9;color:#1B5E20}.bb{background:#BBDEFB;color:#0D47A1}
+  .v-chip{display:inline-block;background:#E8F5E9;color:#2E7D32;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600;margin:2px}
+  .bar-wrap{height:10px;background:#E0E0E0;border-radius:5px;overflow:hidden;margin:6px 0}
+  .bar-fill{height:100%;background:linear-gradient(90deg,#2E7D32,#F9A825);border-radius:5px}
+  .form-group{margin-bottom:14px}
+  .form-group label{display:block;font-size:11px;font-weight:700;color:#616161;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+  .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1.5px solid #E0E0E0;border-radius:8px;font-size:14px;outline:none}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#2E7D32}
+  .form-group textarea{resize:vertical;min-height:80px}
+  .chk-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chk-group label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer}
+  .btn-p{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;background:#2E7D32;color:#fff;margin-top:6px}
+  .alert-s{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:10px}
+  .alert-ok{background:#E8F5E9;border:1px solid #A5D6A7;color:#1B5E20}
+  .alert-err{background:#FFEBEE;border:1px solid #EF9A9A;color:#C62828}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .p-footer{text-align:center;margin-top:20px;font-size:11px;color:#9E9E9E;padding-bottom:20px}
+  </style>`;
+}
+
+// ===== PORTAIL SPONSOR =====
 function renderPortailSponsor(token) {
   const sp=arr(C.sponsors).find(s=>s.token===token);
   const p=C.parametres, nomMin=p.nom||'Ministère Tabita';
   document.getElementById('login-screen').style.display='none';
-  document.body.style.background='var(--gris-fond)';
-  // Chercher les dons par token sponsor OU par nom (insensible à la casse et aux espaces)
   const nomSponsor=(sp?.nom||'').trim().toLowerCase();
-  const dons=arr(C.dons).filter(d=>{
+  const mesDons=arr(C.dons).filter(d=>{
     if(d.sponsor_token && d.sponsor_token===token) return true;
     if(!d.sponsor) return false;
     return d.sponsor.trim().toLowerCase()===nomSponsor;
   });
-  const totalSp=dons.reduce((s,d)=>s+(parseFloat(d.montant)||0),0);
-  document.body.innerHTML=`
-  <div style="max-width:600px;margin:0 auto;padding:20px">
-    <div style="text-align:center;background:var(--vert);color:#fff;padding:30px;border-radius:16px;margin-bottom:20px">
-      <div style="font-size:40px">✝</div>
-      <h1 style="font-size:20px;margin:8px 0">${nomMin}</h1>
-      <p style="font-size:13px;opacity:.8">${p.slogan||''}</p>
-      <p style="font-size:12px;margin-top:12px;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;display:inline-block">Portail Sponsor – ${sp?.nom||'Sponsor'}</p>
+  const totalSp=mesDons.reduce((s,d)=>s+(parseFloat(d.montant)||0),0);
+  const tousDons=arr(C.dons).sort((a,b)=>b.date>a.date?1:-1);
+  const benefs=arr(C.beneficiaires);
+  const visites=arr(C.visites).sort((a,b)=>b.date>a.date?1:-1);
+  const sponsors=arr(C.sponsors);
+  const projets=arr(C.projets);
+
+  document.body.innerHTML = portailStyles() + `
+  <div class="p-header">
+    <div class="cross">✝</div>
+    <h1>${nomMin}</h1>
+    <p>${p.slogan||'Honorer ceux qui ont servi'}</p>
+    <div class="p-badge">🤝 Portail Sponsor – ${sp?.nom||'Sponsor'}</div>
+  </div>
+  <div class="p-wrap">
+    <div class="p-stats">
+      <div class="p-stat"><div class="p-stat-label">Bénéficiaires</div><div class="p-stat-val">${benefs.length}</div></div>
+      <div class="p-stat or"><div class="p-stat-label">Visites</div><div class="p-stat-val">${visites.length}</div></div>
+      <div class="p-stat"><div class="p-stat-label">Total dons</div><div class="p-stat-val" style="font-size:15px">${fmtHTG(totalDons())}</div></div>
+      <div class="p-stat rouge"><div class="p-stat-label">Dépenses</div><div class="p-stat-val" style="font-size:15px">${fmtHTG(totalDepenses())}</div></div>
     </div>
-    <div class="stats-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-      <div class="stat-card"><div class="stat-label">Bénéficiaires</div><div class="stat-val">${arr(C.beneficiaires).length}</div></div>
-      <div class="stat-card or"><div class="stat-label">Visites effectuées</div><div class="stat-val">${arr(C.visites).length}</div></div>
-      <div class="stat-card"><div class="stat-label">Total dons reçus</div><div class="stat-val" style="font-size:16px">${fmtHTG(totalDons())}</div></div>
-      <div class="stat-card rouge"><div class="stat-label">Total dépenses</div><div class="stat-val" style="font-size:16px">${fmtHTG(totalDepenses())}</div></div>
+    <div class="p-card" style="border-left:4px solid #F9A825;margin-bottom:16px">
+      <div style="font-size:13px;color:#616161">Vos contributions totales</div>
+      <div style="font-size:26px;font-weight:700;color:#2E7D32;margin:4px 0">${fmtHTG(totalSp)}</div>
+      <div style="font-size:12px;color:#616161">${mesDons.length} don(s) enregistré(s)</div>
     </div>
-    <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
-      <div style="font-size:15px;font-weight:700;color:var(--vert);margin-bottom:12px">💰 Vos contributions</div>
-      <div style="font-size:22px;font-weight:700;color:var(--vert);margin-bottom:8px">${fmtHTG(totalSp)}</div>
-      ${dons.length ? dons.map(d=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gris-bord);font-size:13px"><span>${d.date||'–'} – ${d.type||'Don'}</span><span style="font-weight:700;color:var(--vert)">${fmtHTG(d.montant)}</span></div>`).join('') : '<p style="color:var(--gris-texte);font-size:13px">Aucun don enregistré pour ce sponsor.</p>'}
+    <div class="p-tabs" id="sp-tabs">
+      <button class="p-tab active" onclick="spTab(0)">💰 Mes dons</button>
+      <button class="p-tab" onclick="spTab(1)">👥 Bénéficiaires</button>
+      <button class="p-tab" onclick="spTab(2)">🚗 Visites</button>
+      <button class="p-tab" onclick="spTab(3)">🤝 Sponsors</button>
+      <button class="p-tab" onclick="spTab(4)">🏗 Projets</button>
+      <button class="p-tab" onclick="spTab(5)">💸 Tous dons</button>
     </div>
-    <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
-      <div style="font-size:15px;font-weight:700;color:var(--vert);margin-bottom:12px">🏗 Projets en cours</div>
-      ${arr(C.projets).filter(p=>p.statut==='En cours').map(p=>{
-        const pct=p.budget>0?Math.round((p.depense||0)/p.budget*100):0;
-        return `<div style="margin-bottom:12px"><div style="font-weight:600;font-size:13px">${p.nom}</div><div style="height:10px;background:var(--gris-bord);border-radius:5px;margin:6px 0;overflow:hidden"><div style="height:100%;width:${Math.min(pct,100)}%;background:var(--vert-clair);border-radius:5px"></div></div><div style="font-size:11px;color:var(--gris-texte)">${pct}% complété</div></div>`;}).join('') || '<p style="color:var(--gris-texte);font-size:13px">Aucun projet en cours.</p>'}
+
+    <!-- MES DONS -->
+    <div class="p-section active" id="sp-s0">
+      <div class="p-card">
+        <div class="p-card-title">💰 Vos contributions</div>
+        ${mesDons.length ? mesDons.map(d=>`
+        <div class="p-row">
+          <div class="p-row-left">
+            <div style="font-weight:600">${d.type||'Don'}</div>
+            <div style="font-size:11px;color:#616161">${d.date||'–'} • Reçu : ${d.recu||'–'}</div>
+            ${d.description?`<div style="font-size:12px;color:#616161;margin-top:2px">${d.description}</div>`:''}
+          </div>
+          <div class="p-row-right">${fmtHTG(d.montant)}</div>
+        </div>`).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun don enregistré pour vous.</p>'}
+      </div>
     </div>
-    <div style="text-align:center;margin-top:20px;font-size:12px;color:var(--gris-texte)">Vue publique – données en lecture seule<br>${nomMin} © ${new Date().getFullYear()}</div>
+
+    <!-- BÉNÉFICIAIRES -->
+    <div class="p-section" id="sp-s1">
+      <div class="p-card">
+        <div class="p-card-title">👥 Bénéficiaires (${benefs.length})</div>
+        ${benefs.length ? benefs.map(b=>`
+        <div class="p-row">
+          <div class="p-row-left">
+            <div style="font-weight:600">${b.prenom||''} ${b.nom||''}</div>
+            <div style="font-size:11px;color:#616161">${b.commune||'–'} • ${b.sexe||''}</div>
+            <div style="margin-top:4px">
+              <span class="p-badge-stat ${b.urgence==='Critique'?'bc':b.urgence==='Élevé'?'bm':b.urgence==='Moyen'?'bm':'bv'}">${b.urgence||'–'}</span>
+              <span class="p-badge-stat bb" style="margin-left:4px">${b.statut||'–'}</span>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#9E9E9E">${b.code||''}</div>
+        </div>`).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun bénéficiaire enregistré.</p>'}
+      </div>
+    </div>
+
+    <!-- VISITES -->
+    <div class="p-section" id="sp-s2">
+      <div class="p-card">
+        <div class="p-card-title">🚗 Visites effectuées (${visites.length})</div>
+        ${visites.length ? visites.map(v=>`
+        <div class="p-row" style="flex-direction:column;align-items:flex-start">
+          <div style="display:flex;justify-content:space-between;width:100%;margin-bottom:6px">
+            <div style="font-weight:700">${v.benef||'–'}</div>
+            <div style="font-size:12px;color:#616161">${v.date||''}</div>
+          </div>
+          <div style="font-size:12px;color:#616161;margin-bottom:4px">État : <strong>${v.sante||'–'}</strong></div>
+          ${v.rapport?`<div style="font-size:12px;color:#424242;margin-bottom:6px;font-style:italic">"${v.rapport}"</div>`:''}
+          ${v.besoin?`<div style="font-size:12px;color:#C62828;font-weight:600;margin-bottom:4px">⚠ ${v.besoin}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:3px">${(v.activites||[]).map(a=>`<span class="v-chip">${a}</span>`).join('')}</div>
+          ${v.membre?`<div style="font-size:11px;color:#9E9E9E;margin-top:4px">Par : ${v.membre}</div>`:''}
+          ${v.prochain?`<div style="font-size:11px;color:#2E7D32;margin-top:2px">📅 Prochaine visite : ${v.prochain}</div>`:''}
+        </div>`).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucune visite enregistrée.</p>'}
+      </div>
+    </div>
+
+    <!-- SPONSORS -->
+    <div class="p-section" id="sp-s3">
+      <div class="p-card">
+        <div class="p-card-title">🤝 Partenaires du ministère (${sponsors.length})</div>
+        ${sponsors.map(s=>{
+          const totalS=arr(C.dons).filter(d=>(d.sponsor||'').trim().toLowerCase()===(s.nom||'').trim().toLowerCase()).reduce((t,d)=>t+(parseFloat(d.montant)||0),0);
+          return `<div class="p-row">
+            <div class="p-row-left">
+              <div style="font-weight:600">${s.nom||'–'}</div>
+              <div style="font-size:11px;color:#616161">${s.type||''} ${s.organisation?'• '+s.organisation:''}</div>
+            </div>
+            <div class="p-row-right">${fmtHTG(totalS)}</div>
+          </div>`;}).join('') || '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun sponsor.</p>'}
+      </div>
+    </div>
+
+    <!-- PROJETS -->
+    <div class="p-section" id="sp-s4">
+      <div class="p-card">
+        <div class="p-card-title">🏗 Projets d'assistance (${projets.length})</div>
+        ${projets.length ? projets.map(pr=>{
+          const pct=pr.budget>0?Math.round((pr.depense||0)/pr.budget*100):0;
+          const sc=pr.statut==='Terminé'?'bv':pr.statut==='En cours'?'bm':'';
+          return `<div style="padding:12px 0;border-bottom:1px solid #E0E0E0">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px">
+              <div style="font-weight:700;font-size:13px">${pr.nom||'–'}</div>
+              <span class="p-badge-stat ${sc}">${pr.statut||'–'}</span>
+            </div>
+            ${pr.description?`<div style="font-size:12px;color:#616161;margin-bottom:6px">${pr.description}</div>`:''}
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px;text-align:center">
+              <div><div style="font-size:10px;color:#9E9E9E;text-transform:uppercase">Budget</div><div style="font-weight:700;font-size:13px">${fmtHTG(pr.budget||0)}</div></div>
+              <div><div style="font-size:10px;color:#9E9E9E;text-transform:uppercase">Collecté</div><div style="font-weight:700;font-size:13px;color:#F9A825">${fmtHTG(pr.montant_collecte||0)}</div></div>
+              <div><div style="font-size:10px;color:#9E9E9E;text-transform:uppercase">Dépensé</div><div style="font-weight:700;font-size:13px;color:#C62828">${fmtHTG(pr.depense||0)}</div></div>
+            </div>
+            <div class="bar-wrap"><div class="bar-fill" style="width:${Math.min(pct,100)}%"></div></div>
+            <div style="font-size:11px;color:#616161">${pct}% complété • Du ${pr.date_debut||'–'} au ${pr.date_fin||'–'}</div>
+          </div>`;}).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun projet.</p>'}
+      </div>
+    </div>
+
+    <!-- TOUS LES DONS -->
+    <div class="p-section" id="sp-s5">
+      <div class="p-card">
+        <div class="p-card-title">💸 Tous les dons reçus</div>
+        ${tousDons.length ? tousDons.map(d=>`
+        <div class="p-row">
+          <div class="p-row-left">
+            <div style="font-weight:600">${d.sponsor||'–'}</div>
+            <div style="font-size:11px;color:#616161">${d.date||'–'} • ${d.type||'Don'} • Reçu : ${d.recu||'–'}</div>
+            ${d.description?`<div style="font-size:12px;color:#616161">${d.description}</div>`:''}
+          </div>
+          <div class="p-row-right">${fmtHTG(d.montant)}</div>
+        </div>`).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun don.</p>'}
+        <div style="text-align:right;padding-top:10px;font-size:14px;font-weight:700;color:#2E7D32;border-top:2px solid #E8F5E9">Total général : ${fmtHTG(totalDons())}</div>
+      </div>
+    </div>
+
+    <div class="p-footer">Vue publique – lecture seule<br>${nomMin} © ${new Date().getFullYear()}</div>
   </div>`;
 }
+function spTab(i) {
+  document.querySelectorAll('#sp-tabs .p-tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('[id^="sp-s"]').forEach((s,j)=>s.classList.toggle('active',i===j));
+}
 
-// ===== ACCÈS MEMBRE (vue terrain) =====
+// ===== ACCÈS MEMBRE =====
 function renderAccesMembre(token) {
   const mb=arr(C.membres).find(m=>m.token===token);
+  const p=C.parametres, nomMin=p.nom||'Ministère Tabita';
+  const benefs=arr(C.beneficiaires);
+  const visites=arr(C.visites).sort((a,b)=>b.date>a.date?1:-1);
+  const dons=arr(C.dons).sort((a,b)=>b.date>a.date?1:-1);
+  const sponsors=arr(C.sponsors);
+  const projets=arr(C.projets);
   document.getElementById('login-screen').style.display='none';
-  document.body.innerHTML=`
-  <div style="max-width:600px;margin:0 auto;padding:20px">
-    <div style="background:var(--vert);color:#fff;padding:20px;border-radius:16px;margin-bottom:16px;text-align:center">
-      <div style="font-size:32px">✝</div>
-      <h2 style="font-size:16px;margin:6px 0">${C.parametres.nom||'Ministère Tabita'}</h2>
-      <p style="font-size:12px;opacity:.8">Accès membre – ${mb?.prenom||''} ${mb?.nom||''}</p>
+
+  document.body.innerHTML = portailStyles() + `
+  <div class="p-header">
+    <div class="cross">✝</div>
+    <h1>${nomMin}</h1>
+    <p>${p.slogan||'Honorer ceux qui ont servi'}</p>
+    <div class="p-badge">👨‍💼 Espace Membre – ${mb?.prenom||''} ${mb?.nom||''}</div>
+  </div>
+  <div class="p-wrap">
+    <div class="p-stats">
+      <div class="p-stat"><div class="p-stat-label">Bénéficiaires</div><div class="p-stat-val">${benefs.length}</div></div>
+      <div class="p-stat or"><div class="p-stat-label">Visites</div><div class="p-stat-val">${visites.length}</div></div>
+      <div class="p-stat"><div class="p-stat-label">Total dons</div><div class="p-stat-val" style="font-size:15px">${fmtHTG(totalDons())}</div></div>
+      <div class="p-stat rouge"><div class="p-stat-label">Dépenses</div><div class="p-stat-val" style="font-size:15px">${fmtHTG(totalDepenses())}</div></div>
     </div>
-    <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
-      <div style="font-size:15px;font-weight:700;color:var(--vert);margin-bottom:14px">📝 Enregistrer une visite</div>
-      <div class="form-group"><label>Bénéficiaire *</label><select id="m-benef"><option value="">-- Sélectionner --</option>${arr(C.beneficiaires).map(b=>`<option>${b.prenom||''} ${b.nom||''}</option>`).join('')}</select></div>
-      <div class="form-group"><label>Date</label><input type="date" id="m-date" value="${today()}"></div>
-      <div class="form-group"><label>Activités réalisées</label>
-        <div class="checkbox-group" style="margin-top:6px">
-          <label><input type="checkbox" id="m-priere"> 🙏 Prière</label>
-          <label><input type="checkbox" id="m-cene"> 🍞 Sainte-Cène</label>
-          <label><input type="checkbox" id="m-bible"> 📖 Étude biblique</label>
-          <label><input type="checkbox" id="m-aliment"> 🍚 Distribution alimentaire</label>
-          <label><input type="checkbox" id="m-medical"> 💊 Assistance médicale</label>
-          <label><input type="checkbox" id="m-nettoyage"> 🧹 Nettoyage</label>
+    <div class="p-tabs" id="mb-tabs">
+      <button class="p-tab active" onclick="mbTab(0)">📝 Nouvelle visite</button>
+      <button class="p-tab" onclick="mbTab(1)">👥 Bénéficiaires</button>
+      <button class="p-tab" onclick="mbTab(2)">🚗 Visites</button>
+      <button class="p-tab" onclick="mbTab(3)">💰 Dons</button>
+      <button class="p-tab" onclick="mbTab(4)">🤝 Sponsors</button>
+      <button class="p-tab" onclick="mbTab(5)">🏗 Projets</button>
+    </div>
+
+    <!-- ENREGISTRER VISITE -->
+    <div class="p-section active" id="mb-s0">
+      <div class="p-card">
+        <div class="p-card-title">📝 Enregistrer une visite</div>
+        <div class="form-group"><label>Bénéficiaire *</label>
+          <select id="m-benef"><option value="">-- Sélectionner --</option>${benefs.map(b=>`<option>${b.prenom||''} ${b.nom||''}</option>`).join('')}</select></div>
+        <div class="form-group"><label>Date *</label><input type="date" id="m-date" value="${today()}"></div>
+        <div class="form-group"><label>Heure</label><input type="time" id="m-heure"></div>
+        <div class="form-group"><label>Adresse de visite</label><input type="text" id="m-adresse" placeholder="Adresse..."></div>
+        <div class="form-group"><label>Activités réalisées</label>
+          <div class="chk-group">
+            <label><input type="checkbox" id="m-priere"> 🙏 Prière</label>
+            <label><input type="checkbox" id="m-cene"> 🍞 Sainte-Cène</label>
+            <label><input type="checkbox" id="m-bible"> 📖 Étude biblique</label>
+            <label><input type="checkbox" id="m-chant"> 🎵 Chant</label>
+            <label><input type="checkbox" id="m-aliment"> 🍚 Distribution alimentaire</label>
+            <label><input type="checkbox" id="m-vetements"> 👕 Distribution vêtements</label>
+            <label><input type="checkbox" id="m-medical"> 💊 Assistance médicale</label>
+            <label><input type="checkbox" id="m-nettoyage"> 🧹 Nettoyage</label>
+          </div>
         </div>
+        <div class="form-group"><label>État de santé observé</label>
+          <select id="m-sante"><option>Excellent</option><option>Bon</option><option>Passable</option><option>Mauvais</option><option>Critique</option></select></div>
+        <div class="form-group"><label>Rapport / Observations</label>
+          <textarea id="m-rapport" placeholder="État général, besoins observés..."></textarea></div>
+        <div class="form-group"><label>Besoin urgent</label>
+          <input type="text" id="m-besoin" placeholder="Médicaments, nourriture, hospitalisation..."></div>
+        <div class="form-group"><label>Prochaine visite prévue</label>
+          <input type="date" id="m-prochain"></div>
+        <div id="m-confirm"></div>
+        <button class="btn-p" id="m-btn-save" onclick="saveVisiteMembre('${token}','${mb?.prenom||''} ${mb?.nom||''}')">✔ Soumettre la visite</button>
       </div>
-      <div class="form-group"><label>État de santé</label><select id="m-sante"><option>Excellent</option><option>Bon</option><option>Passable</option><option>Mauvais</option><option>Critique</option></select></div>
-      <div class="form-group"><label>Rapport / Observations</label><textarea id="m-rapport" placeholder="État général, besoins observés..."></textarea></div>
-      <div class="form-group"><label>Besoin urgent</label><input type="text" id="m-besoin" placeholder="Médicaments, nourriture..."></div>
-      <button class="btn btn-primary btn-full" id="m-btn-save" onclick="saveVisiteMembre('${token}','${mb?.prenom||''} ${mb?.nom||''}')">✔ Soumettre la visite</button>
     </div>
-    <div id="m-confirm" style="margin-top:16px"></div>
+
+    <!-- BÉNÉFICIAIRES -->
+    <div class="p-section" id="mb-s1">
+      <div class="p-card">
+        <div class="p-card-title">👥 Bénéficiaires (${benefs.length})</div>
+        ${benefs.length ? benefs.map(b=>`
+        <div class="p-row" style="flex-direction:column;align-items:flex-start">
+          <div style="display:flex;justify-content:space-between;width:100%;margin-bottom:4px">
+            <div style="font-weight:700">${b.prenom||''} ${b.nom||''} <span style="font-size:11px;color:#9E9E9E">${b.code||''}</span></div>
+            <span class="p-badge-stat ${b.urgence==='Critique'?'bc':b.urgence==='Élevé'?'bm':'bv'}">${b.urgence||'–'}</span>
+          </div>
+          <div style="font-size:12px;color:#616161">${b.commune||'–'} • ${b.sexe||''} • ${b.telephone||''}</div>
+          <div style="font-size:12px;color:#616161;margin-top:2px">Statut : <strong>${b.statut||'–'}</strong></div>
+          ${b.adresse?`<div style="font-size:12px;color:#616161;margin-top:2px">📍 ${b.adresse}</div>`:''}
+        </div>`).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun bénéficiaire.</p>'}
+      </div>
+    </div>
+
+    <!-- VISITES -->
+    <div class="p-section" id="mb-s2">
+      <div class="p-card">
+        <div class="p-card-title">🚗 Toutes les visites (${visites.length})</div>
+        ${visites.length ? visites.map(v=>`
+        <div class="p-row" style="flex-direction:column;align-items:flex-start">
+          <div style="display:flex;justify-content:space-between;width:100%;margin-bottom:4px">
+            <div style="font-weight:700">${v.benef||'–'}</div>
+            <div style="font-size:12px;color:#616161">${v.date||''}</div>
+          </div>
+          <div style="font-size:12px;color:#616161">État : <strong>${v.sante||'–'}</strong>${v.heure?' • '+v.heure:''}</div>
+          ${v.rapport?`<div style="font-size:12px;color:#424242;margin:4px 0;font-style:italic">"${v.rapport}"</div>`:''}
+          ${v.besoin?`<div style="font-size:12px;color:#C62828;font-weight:600;margin-bottom:4px">⚠ ${v.besoin}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(v.activites||[]).map(a=>`<span class="v-chip">${a}</span>`).join('')}</div>
+          ${v.membre?`<div style="font-size:11px;color:#9E9E9E;margin-top:4px">Par : ${v.membre}</div>`:''}
+          ${v.prochain?`<div style="font-size:11px;color:#2E7D32;margin-top:2px">📅 Prochaine : ${v.prochain}</div>`:''}
+        </div>`).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucune visite.</p>'}
+      </div>
+    </div>
+
+    <!-- DONS -->
+    <div class="p-section" id="mb-s3">
+      <div class="p-card">
+        <div class="p-card-title">💰 Dons reçus (${dons.length})</div>
+        ${dons.length ? dons.map(d=>`
+        <div class="p-row">
+          <div class="p-row-left">
+            <div style="font-weight:600">${d.sponsor||'–'}</div>
+            <div style="font-size:11px;color:#616161">${d.date||'–'} • ${d.type||'Don'} • N° ${d.recu||'–'}</div>
+            ${d.description?`<div style="font-size:12px;color:#616161">${d.description}</div>`:''}
+          </div>
+          <div class="p-row-right">${fmtHTG(d.montant)}</div>
+        </div>`).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun don.</p>'}
+        <div style="text-align:right;padding-top:10px;font-size:14px;font-weight:700;color:#2E7D32;border-top:2px solid #E8F5E9">Total : ${fmtHTG(totalDons())}</div>
+      </div>
+    </div>
+
+    <!-- SPONSORS -->
+    <div class="p-section" id="mb-s4">
+      <div class="p-card">
+        <div class="p-card-title">🤝 Sponsors (${sponsors.length})</div>
+        ${sponsors.length ? sponsors.map(s=>{
+          const totalS=arr(C.dons).filter(d=>(d.sponsor||'').trim().toLowerCase()===(s.nom||'').trim().toLowerCase()).reduce((t,d)=>t+(parseFloat(d.montant)||0),0);
+          return `<div class="p-row">
+            <div class="p-row-left">
+              <div style="font-weight:600">${s.nom||'–'}</div>
+              <div style="font-size:11px;color:#616161">${s.type||''} ${s.organisation?'• '+s.organisation:''}</div>
+              ${s.telephone?`<div style="font-size:11px;color:#616161">📞 ${s.telephone}</div>`:''}
+            </div>
+            <div class="p-row-right">${fmtHTG(totalS)}</div>
+          </div>`;}).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun sponsor.</p>'}
+      </div>
+    </div>
+
+    <!-- PROJETS -->
+    <div class="p-section" id="mb-s5">
+      <div class="p-card">
+        <div class="p-card-title">🏗 Projets (${projets.length})</div>
+        ${projets.length ? projets.map(pr=>{
+          const pct=pr.budget>0?Math.round((pr.depense||0)/pr.budget*100):0;
+          const sc=pr.statut==='Terminé'?'bv':pr.statut==='En cours'?'bm':'';
+          return `<div style="padding:12px 0;border-bottom:1px solid #E0E0E0">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px">
+              <div style="font-weight:700;font-size:13px">${pr.nom||'–'}</div>
+              <span class="p-badge-stat ${sc}">${pr.statut||'–'}</span>
+            </div>
+            ${pr.description?`<div style="font-size:12px;color:#616161;margin-bottom:6px">${pr.description}</div>`:''}
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px;text-align:center">
+              <div><div style="font-size:10px;color:#9E9E9E;text-transform:uppercase">Budget</div><div style="font-weight:700;font-size:13px">${fmtHTG(pr.budget||0)}</div></div>
+              <div><div style="font-size:10px;color:#9E9E9E;text-transform:uppercase">Collecté</div><div style="font-weight:700;font-size:13px;color:#F9A825">${fmtHTG(pr.montant_collecte||0)}</div></div>
+              <div><div style="font-size:10px;color:#9E9E9E;text-transform:uppercase">Dépensé</div><div style="font-weight:700;font-size:13px;color:#C62828">${fmtHTG(pr.depense||0)}</div></div>
+            </div>
+            <div class="bar-wrap"><div class="bar-fill" style="width:${Math.min(pct,100)}%"></div></div>
+            <div style="font-size:11px;color:#616161">${pct}% • Du ${pr.date_debut||'–'} au ${pr.date_fin||'–'}</div>
+          </div>`;}).join('') : '<p style="color:#9E9E9E;font-size:13px;padding:10px 0">Aucun projet.</p>'}
+      </div>
+    </div>
+
+    <div class="p-footer">Espace membre – ${nomMin} © ${new Date().getFullYear()}</div>
   </div>`;
+}
+function mbTab(i) {
+  document.querySelectorAll('#mb-tabs .p-tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('[id^="mb-s"]').forEach((s,j)=>s.classList.toggle('active',i===j));
 }
 async function saveVisiteMembre(token, nomMembre) {
   const benef=document.getElementById('m-benef').value;
   const date=document.getElementById('m-date').value;
-  if(!benef||!date){alert('Bénéficiaire et date obligatoires');return;}
+  if(!benef||!date){
+    document.getElementById('m-confirm').innerHTML=`<div class="alert-s alert-err">⚠ Bénéficiaire et date obligatoires.</div>`;
+    return;
+  }
   const btn=document.getElementById('m-btn-save');
-  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Envoi...'; btn.disabled=true;
   const activites=[];
-  if(document.getElementById('m-priere').checked)  activites.push('Prière');
-  if(document.getElementById('m-cene').checked)    activites.push('Sainte-Cène');
-  if(document.getElementById('m-bible').checked)   activites.push('Étude biblique');
-  if(document.getElementById('m-aliment').checked) activites.push('Distribution alimentaire');
-  if(document.getElementById('m-medical').checked) activites.push('Assistance médicale');
-  if(document.getElementById('m-nettoyage').checked)activites.push('Nettoyage');
-  const data={date,benef,activites,sante:document.getElementById('m-sante').value,rapport:document.getElementById('m-rapport').value,besoin:document.getElementById('m-besoin').value,membre:nomMembre};
+  if(document.getElementById('m-priere').checked)    activites.push('Prière');
+  if(document.getElementById('m-cene').checked)      activites.push('Sainte-Cène');
+  if(document.getElementById('m-bible').checked)     activites.push('Étude biblique');
+  if(document.getElementById('m-chant').checked)     activites.push('Chant');
+  if(document.getElementById('m-aliment').checked)   activites.push('Distribution alimentaire');
+  if(document.getElementById('m-vetements').checked) activites.push('Distribution vêtements');
+  if(document.getElementById('m-medical').checked)   activites.push('Assistance médicale');
+  if(document.getElementById('m-nettoyage').checked) activites.push('Nettoyage');
+  const data={date,benef,activites,heure:document.getElementById('m-heure').value,adresse:document.getElementById('m-adresse').value,sante:document.getElementById('m-sante').value,rapport:document.getElementById('m-rapport').value,besoin:document.getElementById('m-besoin').value,prochain:document.getElementById('m-prochain').value,membre:nomMembre};
   await fbPush('visites',data);
   btn.innerHTML='✔ Soumettre la visite'; btn.disabled=false;
-  document.getElementById('m-confirm').innerHTML=`<div class="alert alert-success">✅ Visite enregistrée avec succès ! Merci ${nomMembre}.</div>`;
-  ['m-rapport','m-besoin'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m-confirm').innerHTML=`<div class="alert-s alert-ok">✅ Visite enregistrée ! Merci ${nomMembre}.</div>`;
+  ['m-rapport','m-besoin','m-adresse','m-prochain'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('m-benef').value='';
+  document.getElementById('m-heure').value='';
+  ['m-priere','m-cene','m-bible','m-chant','m-aliment','m-vetements','m-medical','m-nettoyage'].forEach(id=>document.getElementById(id).checked=false);
 }
 
 // ===== INIT =====
