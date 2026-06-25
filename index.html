@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>SGMT – Ministère Tabita</title>
 <style>
 :root{--vert:#1B5E20;--vert-clair:#2E7D32;--vert-light:#E8F5E9;--or:#F9A825;--or-light:#FFF8E1;--rouge:#C62828;--rouge-light:#FFEBEE;--bleu:#0277BD;--gris-fond:#F5F5F5;--gris-bord:#E0E0E0;--gris-texte:#616161;--blanc:#FFFFFF;--noir:#212121;--sidebar-w:260px;--header-h:60px}
@@ -492,7 +495,7 @@ async function fbDelete(path) {
 }
 
 // ===== CACHE =====
-const C = { beneficiaires:{}, membres:{}, sponsors:{}, dons:{}, depenses:{}, visites:{}, projets:{}, inventaire:{}, notifications:{}, parametres:{} };
+const C = { beneficiaires:{}, membres:{}, sponsors:{}, dons:{}, depenses:{}, visites:{}, projets:{}, inventaire:{}, notifications:{}, parametres:{}, spirituel:{} };
 
 // ===== AUTH =====
 async function doLogin() {
@@ -504,11 +507,13 @@ async function doLogin() {
   btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; err.style.display='none';
   const res = await fbSignIn(email, pwd);
   if (res.idToken) {
-    AUTH = { token:res.idToken, uid:res.localId, email, nom:res.displayName||email.split('@')[0] };
-    localStorage.setItem('sgmt_token', res.idToken);
-    localStorage.setItem('sgmt_uid',   res.localId);
-    localStorage.setItem('sgmt_email', email);
-    localStorage.setItem('sgmt_nom',   AUTH.nom);
+    AUTH = { token:res.idToken, refreshToken:res.refreshToken, uid:res.localId, email, nom:res.displayName||email.split('@')[0] };
+    localStorage.setItem('sgmt_token',        res.idToken);
+    localStorage.setItem('sgmt_refresh',      res.refreshToken);
+    localStorage.setItem('sgmt_uid',          res.localId);
+    localStorage.setItem('sgmt_email',        email);
+    localStorage.setItem('sgmt_nom',          AUTH.nom);
+    localStorage.setItem('sgmt_token_time',   Date.now().toString());
     lancerApp();
   } else {
     err.textContent='⚠ Email ou mot de passe incorrect';
@@ -516,15 +521,47 @@ async function doLogin() {
     btn.innerHTML='SE CONNECTER'; btn.disabled=false;
   }
 }
+
+// Rafraîchir le token Firebase (expire après 1h)
+async function refreshToken() {
+  const refresh = localStorage.getItem('sgmt_refresh');
+  if (!refresh) return false;
+  try {
+    const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FB.apiKey}`, {
+      method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:`grant_type=refresh_token&refresh_token=${refresh}`
+    });
+    const data = await r.json();
+    if (data.id_token) {
+      AUTH.token = data.id_token;
+      localStorage.setItem('sgmt_token',      data.id_token);
+      localStorage.setItem('sgmt_refresh',    data.refresh_token);
+      localStorage.setItem('sgmt_token_time', Date.now().toString());
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+// Vérifier et rafraîchir si token proche de l'expiration (50 min)
+async function verifierToken() {
+  const tokenTime = parseInt(localStorage.getItem('sgmt_token_time')||'0');
+  const age = Date.now() - tokenTime;
+  if (age > 50 * 60 * 1000) { // 50 minutes
+    await refreshToken();
+  }
+}
+
 function doLogout() {
-  AUTH = { token:null, uid:null, email:null, nom:'' };
-  ['sgmt_token','sgmt_uid','sgmt_email','sgmt_nom'].forEach(k=>localStorage.removeItem(k));
+  AUTH = { token:null, refreshToken:null, uid:null, email:null, nom:'' };
+  ['sgmt_token','sgmt_refresh','sgmt_uid','sgmt_email','sgmt_nom','sgmt_token_time'].forEach(k=>localStorage.removeItem(k));
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('login-btn').innerHTML='SE CONNECTER';
   document.getElementById('login-btn').disabled=false;
   showToast('Déconnecté');
 }
+
 async function lancerApp() {
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='flex';
@@ -533,9 +570,13 @@ async function lancerApp() {
   document.getElementById('sb-avatar').textContent = av;
   document.getElementById('top-avatar').textContent = av;
   setFbStatus('saving');
+  // Rafraîchir token avant de charger
+  await verifierToken();
   await chargerTout();
   appliquerParametres();
   showPage('dashboard');
+  // Rafraîchir token automatiquement toutes les 45 minutes
+  setInterval(verifierToken, 45 * 60 * 1000);
 }
 
 // ===== INDICATEUR =====
@@ -548,16 +589,30 @@ function setFbStatus(s) {
 // ===== CHARGEMENT =====
 async function chargerTout() {
   try {
-    const [b,mb,sp,d,dep,v,pr,inv,n,param] = await Promise.all([
+    // Vérifier token avant chargement
+    await verifierToken();
+    const [b,mb,sp,d,dep,v,pr,inv,n,param,spi] = await Promise.all([
       fbGet('beneficiaires'), fbGet('membres'), fbGet('sponsors'), fbGet('dons'),
       fbGet('depenses'), fbGet('visites'), fbGet('projets'), fbGet('inventaire'),
-      fbGet('notifications'), fbGet('parametres')
+      fbGet('notifications'), fbGet('parametres'), fbGet('spirituel')
     ]);
-    C.beneficiaires = b||{}; C.membres=mb||{}; C.sponsors=sp||{}; C.dons=d||{};
-    C.depenses=dep||{}; C.visites=v||{}; C.projets=pr||{}; C.inventaire=inv||{};
-    C.notifications=n||{}; C.parametres=param||{};
+    if(b !== null)     C.beneficiaires = b||{};
+    if(mb !== null)    C.membres       = mb||{};
+    if(sp !== null)    C.sponsors      = sp||{};
+    if(d !== null)     C.dons          = d||{};
+    if(dep !== null)   C.depenses      = dep||{};
+    if(v !== null)     C.visites       = v||{};
+    if(pr !== null)    C.projets       = pr||{};
+    if(inv !== null)   C.inventaire    = inv||{};
+    if(n !== null)     C.notifications = n||{};
+    if(param !== null) C.parametres    = param||{};
+    if(spi !== null)   C.spirituel     = spi||{};
     updateBadges(); setFbStatus('online');
-  } catch(e) { setFbStatus('offline'); }
+  } catch(e) {
+    console.error('Erreur chargement:', e);
+    setFbStatus('offline');
+    showToast('⚠ Problème de connexion Firebase', 'rouge');
+  }
 }
 
 // ===== PARAMÈTRES =====
@@ -758,9 +813,89 @@ async function deleteBenef(key,nom) {
 // ===== SPIRITUEL =====
 function renderSpiriturel() {
   const list=arr(C.beneficiaires);
-  return `<div class="card"><div class="card-title">🙏 Dossiers Spirituels</div>
-  <div class="table-wrapper"><table><thead><tr><th>Bénéficiaire</th><th>Converti</th><th>Baptisé</th><th>Dernière Sainte-Cène</th><th>Actions</th></tr></thead>
-  <tbody>${list.length?list.map(b=>`<tr><td><strong>${b.prenom||''} ${b.nom||''}</strong></td><td>✅</td><td>✅</td><td>–</td><td><button class="btn btn-ghost btn-sm">✏ Modifier</button></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun dossier</td></tr>'}</tbody></table></div></div>`;
+  return `<div class="card">
+    <div class="card-title">🙏 Dossiers Spirituels</div>
+    ${list.length===0?`<div class="alert alert-info">ℹ Aucun bénéficiaire enregistré. <button class="btn btn-primary btn-sm" onclick="showPage('beneficiaires')">Ajouter bénéficiaires</button></div>`:''}
+    ${list.map(b=>{
+      const sp=C.spirituel&&C.spirituel[b._key]||{};
+      return `<div style="border:1px solid var(--gris-bord);border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid #9C27B0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-weight:700;font-size:14px">${b.prenom||''} ${b.nom||''}</div>
+            <div style="font-size:11px;color:var(--gris-texte)">${b.code||''} • ${b.commune||''}</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="toggleSpiriturel('sp-form-${b._key}')">✏ Modifier</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div style="font-size:12px"><span style="color:var(--gris-texte)">Converti :</span> <strong>${sp.converti?'✅ Oui':'❌ Non'}</strong></div>
+          <div style="font-size:12px"><span style="color:var(--gris-texte)">Baptisé :</span> <strong>${sp.baptise?'✅ Oui':'❌ Non'}</strong></div>
+          <div style="font-size:12px"><span style="color:var(--gris-texte)">Dernière Sainte-Cène :</span> <strong>${sp.derniere_sainte_cene||'–'}</strong></div>
+          <div style="font-size:12px"><span style="color:var(--gris-texte)">Dernière visite pastorale :</span> <strong>${sp.derniere_visite_pastorale||'–'}</strong></div>
+        </div>
+        ${sp.sujet_priere?`<div style="font-size:12px;color:var(--gris-texte);margin-bottom:4px">🙏 <em>${sp.sujet_priere}</em></div>`:''}
+        ${sp.besoins_spirituels?`<div style="font-size:12px;color:var(--gris-texte)">📖 <em>${sp.besoins_spirituels}</em></div>`:''}
+        <!-- Formulaire caché -->
+        <div id="sp-form-${b._key}" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--gris-bord)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Converti(e)</label>
+              <select id="sp-converti-${b._key}"><option value="1" ${sp.converti?'selected':''}>✅ Oui</option><option value="0" ${!sp.converti?'selected':''}>❌ Non</option></select>
+            </div>
+            <div class="form-group">
+              <label>Baptisé(e)</label>
+              <select id="sp-baptise-${b._key}"><option value="1" ${sp.baptise?'selected':''}>✅ Oui</option><option value="0" ${!sp.baptise?'selected':''}>❌ Non</option></select>
+            </div>
+            <div class="form-group">
+              <label>Date du baptême</label>
+              <input type="date" id="sp-date-bapteme-${b._key}" value="${sp.date_bapteme||''}">
+            </div>
+            <div class="form-group">
+              <label>Dernière Sainte-Cène</label>
+              <input type="date" id="sp-cene-${b._key}" value="${sp.derniere_sainte_cene||''}">
+            </div>
+            <div class="form-group">
+              <label>Dernière visite pastorale</label>
+              <input type="date" id="sp-pastorale-${b._key}" value="${sp.derniere_visite_pastorale||''}">
+            </div>
+            <div class="form-group form-full">
+              <label>Sujet(s) de prière</label>
+              <textarea id="sp-priere-${b._key}" placeholder="Besoins de prière...">${sp.sujet_priere||''}</textarea>
+            </div>
+            <div class="form-group form-full">
+              <label>Besoins spirituels</label>
+              <textarea id="sp-besoins-${b._key}" placeholder="Besoins spirituels particuliers...">${sp.besoins_spirituels||''}</textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="saveSpiriturel('${b._key}')">💾 Enregistrer</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleSpiriturel('sp-form-${b._key}')">Annuler</button>
+          </div>
+        </div>
+      </div>`;}).join('')}
+  </div>`;
+}
+function toggleSpiriturel(id) {
+  const el=document.getElementById(id);
+  if(el) el.style.display=el.style.display==='none'?'block':'none';
+}
+async function saveSpiriturel(key) {
+  setFbStatus('saving');
+  if(!C.spirituel) C.spirituel={};
+  const data={
+    converti:   document.getElementById(`sp-converti-${key}`).value==='1',
+    baptise:    document.getElementById(`sp-baptise-${key}`).value==='1',
+    date_bapteme:             document.getElementById(`sp-date-bapteme-${key}`).value,
+    derniere_sainte_cene:     document.getElementById(`sp-cene-${key}`).value,
+    derniere_visite_pastorale:document.getElementById(`sp-pastorale-${key}`).value,
+    sujet_priere:             document.getElementById(`sp-priere-${key}`).value,
+    besoins_spirituels:       document.getElementById(`sp-besoins-${key}`).value,
+    beneficiaire_id:          key
+  };
+  await fbSet(`spirituel/${key}`, data);
+  C.spirituel[key]=data;
+  setFbStatus('online');
+  showToast('✓ Dossier spirituel enregistré');
+  showPage('spirituel');
 }
 
 // ===== SANTÉ =====
@@ -929,20 +1064,39 @@ function renderSponsors() {
   const list=arr(C.sponsors);
   const baseUrl=window.location.href.split('?')[0];
   return `<div class="card"><div class="card-title">🤝 Sponsors & Partenaires</div>
-  <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..."><button class="btn btn-primary" onclick="openNewSponsor()">+ Ajouter</button></div>
-  <div class="table-wrapper"><table><thead><tr><th>Sponsor</th><th>Type</th><th>Téléphone</th><th>Portail</th><th>Actions</th></tr></thead>
-  <tbody>${list.length?list.map(s=>{
+  <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..." oninput="filterSponsors(this.value)"><button class="btn btn-primary" onclick="openNewSponsor()">+ Ajouter</button></div>
+  <div id="sponsors-list">${renderSponsorCards(list, baseUrl)}</div></div>`;
+}
+function renderSponsorCards(list, baseUrl) {
+  if(!list.length) return `<div class="alert alert-info">Aucun sponsor enregistré.</div>`;
+  return list.map(s=>{
     const lien=s.token?`${baseUrl}?sponsor=${s.token}`:'';
-    return `<tr>
-      <td><div style="font-weight:600">${s.nom||''}</div><div style="font-size:11px;color:var(--gris-texte)">${s.organisation||''}</div></td>
-      <td><span class="badge-status badge-actif">${s.type||'–'}</span></td>
-      <td>${s.telephone||'–'}</td>
-      <td>${lien?`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-or btn-sm" onclick="copierTexte('${lien}')">🔗 Copier lien</button></div>`:'–'}</td>
-      <td><div class="actions-cell">
-        <button class="btn btn-ghost btn-sm" onclick="editSponsor('${s._key}')">✏</button>
+    const totalS=arr(C.dons).filter(d=>(d.sponsor||'').trim().toLowerCase()===(s.nom||'').trim().toLowerCase()).reduce((t,d)=>t+(parseFloat(d.montant)||0),0);
+    return `<div style="background:var(--blanc);border:1px solid var(--gris-bord);border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--or)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700;font-size:15px">${s.nom||'–'}</div>
+          <div style="font-size:12px;color:var(--gris-texte)">${s.type||'–'} ${s.organisation?'• '+s.organisation:''}</div>
+          ${s.telephone?`<div style="font-size:12px;color:var(--gris-texte)">📞 ${s.telephone}</div>`:''}
+          ${s.email?`<div style="font-size:12px;color:var(--gris-texte)">✉ ${s.email}</div>`:''}
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--gris-texte)">Total donné</div>
+          <div style="font-weight:700;font-size:16px;color:var(--vert)">${fmtHTG(totalS)}</div>
+        </div>
+      </div>
+      ${lien?`<div style="background:var(--vert-light);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--vert);margin-bottom:8px;word-break:break-all">🔗 ${lien}</div>`:''}
+      <div class="actions-cell">
+        ${lien?`<button class="btn btn-or btn-sm" onclick="copierTexte('${lien}')">📋 Copier lien portail</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="editSponsor('${s._key}')">✏ Modifier</button>
         <button class="btn btn-danger btn-sm" onclick="deleteSponsor('${s._key}')">🗑</button>
-      </div></td>
-    </tr>`;}).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun sponsor enregistré</td></tr>'}</tbody></table></div></div>`;
+      </div>
+    </div>`;}).join('');
+}
+function filterSponsors(val) {
+  const f=arr(C.sponsors).filter(s=>`${s.nom} ${s.organisation} ${s.type}`.toLowerCase().includes(val.toLowerCase()));
+  const el=document.getElementById('sponsors-list');
+  if(el) el.innerHTML=renderSponsorCards(f, window.location.href.split('?')[0]);
 }
 function openNewSponsor() {
   document.getElementById('modal-sponsor-title').textContent='Nouveau Sponsor';
@@ -1752,7 +1906,6 @@ window.addEventListener('load', async () => {
   const sponsorToken=params.get('sponsor');
   const membreToken=params.get('membre');
   if(sponsorToken||membreToken) {
-    // Charger données publiques sans auth
     try {
       const [b,sp,d,dep,v,pr,mb,param]=await Promise.all([
         fbGet('beneficiaires'),fbGet('sponsors'),fbGet('dons'),fbGet('depenses'),
@@ -1765,10 +1918,23 @@ window.addEventListener('load', async () => {
     } catch(e) { alert('Erreur de connexion Firebase.'); }
     return;
   }
-  const token=localStorage.getItem('sgmt_token');
-  if(token) {
-    AUTH={token,uid:localStorage.getItem('sgmt_uid'),email:localStorage.getItem('sgmt_email'),nom:localStorage.getItem('sgmt_nom')||''};
-    lancerApp();
+  // Auto-login : récupérer token sauvegardé et le rafraîchir
+  const savedRefresh = localStorage.getItem('sgmt_refresh');
+  const savedEmail   = localStorage.getItem('sgmt_email');
+  const savedNom     = localStorage.getItem('sgmt_nom');
+  const savedUid     = localStorage.getItem('sgmt_uid');
+  if (savedRefresh) {
+    // Toujours rafraîchir le token au chargement (évite l'expiration)
+    AUTH = { token: localStorage.getItem('sgmt_token')||'', refreshToken: savedRefresh, uid: savedUid||'', email: savedEmail||'', nom: savedNom||'' };
+    const ok = await refreshToken();
+    if (ok) {
+      lancerApp();
+    } else {
+      // Si le refresh échoue, montrer la page de connexion
+      document.getElementById('login-screen').style.display='flex';
+    }
+  } else {
+    document.getElementById('login-screen').style.display='flex';
   }
 });
 window.addEventListener('keypress',e=>{if(e.key==='Enter'&&document.getElementById('login-screen')?.style.display!=='none') doLogin();});
