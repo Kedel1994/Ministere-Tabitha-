@@ -1303,21 +1303,56 @@ async function deleteSponsor(key) {
 function renderDons() {
   const list=arr(C.dons).sort((a,b)=>b.date>a.date?1:-1);
   return `<div class="card"><div class="card-title">💰 Dons Reçus</div>
-  <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..."><button class="btn btn-or" onclick="openNewDon()">+ Enregistrer un don</button></div>
-  <div class="table-wrapper"><table><thead><tr><th>N° Reçu</th><th>Date</th><th>Sponsor</th><th>Type</th><th>Montant</th><th>Actions</th></tr></thead>
-  <tbody>${list.length?list.map(d=>`<tr>
-    <td><strong>${d.recu||'–'}</strong></td><td>${d.date||''}</td><td>${d.sponsor||'–'}</td>
-    <td><span class="badge-status badge-actif">${d.type||'–'}</span></td>
-    <td style="font-weight:700;color:var(--vert)">${fmtHTG(d.montant)}</td>
-    <td><div class="actions-cell">
-      <button class="btn btn-primary btn-sm" onclick="afficherMemo('${d._key}')">📲 Mémo</button>
-      <button class="btn btn-ghost btn-sm" onclick="editDon('${d._key}')">✏</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteDon('${d._key}')">🗑</button>
-    </div></td>
-  </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gris-texte)">Aucun don enregistré</td></tr>'}</tbody></table></div>
-  <div style="text-align:right;padding-top:12px;font-size:15px;font-weight:700;color:var(--vert)">Total : ${fmtHTG(totalDons())}</div></div>`;
+  <div class="toolbar"><input type="text" placeholder="🔍 Rechercher..." oninput="filterDons(this.value)"><button class="btn btn-or" onclick="openNewDon()">+ Enregistrer un don</button></div>
+  <div id="dons-list">${renderDonRows(list)}</div>
+  <div style="text-align:right;padding-top:12px;font-size:15px;font-weight:700;color:var(--vert);border-top:2px solid var(--vert-light);margin-top:8px">Total général : ${fmtHTG(totalDons())}</div></div>`;
 }
+
+function renderDonRows(list) {
+  if(!list.length) return `<div class="alert alert-info" style="margin-top:10px">Aucun don enregistré. Commencez par ajouter des sponsors, puis enregistrez les dons.</div>`;
+  return list.map(d=>{
+    // Retrouver le sponsor lié par clé ou par token ou par nom
+    const sp = d.sponsor_key ? C.sponsors[d.sponsor_key] : arr(C.sponsors).find(s=>(s.nom||'').trim().toLowerCase()===(d.sponsor||'').trim().toLowerCase());
+    const spNom = sp?.nom || d.sponsor || '–';
+    const spTel = sp?.telephone || '';
+    return `<div style="border:1px solid var(--gris-bord);border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid var(--or)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700;font-size:15px">${fmtHTG(d.montant)}</div>
+          <div style="font-size:12px;color:var(--gris-texte)">${d.date||'–'} • Reçu : ${d.recu||'–'}</div>
+        </div>
+        <span class="badge-status badge-actif">${d.type||'Don'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--vert-light);border-radius:8px;margin-bottom:8px">
+        <span style="font-size:18px">🤝</span>
+        <div>
+          <div style="font-weight:700;font-size:13px;color:var(--vert)">${spNom}</div>
+          ${sp?.type?`<div style="font-size:11px;color:var(--gris-texte)">${sp.type}${sp.organisation?' • '+sp.organisation:''}</div>`:''}
+          ${spTel?`<div style="font-size:11px;color:var(--gris-texte)">📞 ${spTel}</div>`:''}
+        </div>
+      </div>
+      ${d.description?`<div style="font-size:12px;color:var(--gris-texte);font-style:italic;margin-bottom:8px">"${d.description}"</div>`:''}
+      <div class="actions-cell">
+        <button class="btn btn-primary btn-sm" onclick="afficherMemo('${d._key}')">📲 Mémo WhatsApp</button>
+        <button class="btn btn-ghost btn-sm" onclick="editDon('${d._key}')">✏ Modifier</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteDon('${d._key}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterDons(val) {
+  const f=arr(C.dons).filter(d=>`${d.sponsor} ${d.type} ${d.recu} ${d.date}`.toLowerCase().includes(val.toLowerCase())).sort((a,b)=>b.date>a.date?1:-1);
+  const el=document.getElementById('dons-list'); if(el) el.innerHTML=renderDonRows(f);
+}
+
 function openNewDon() {
+  const sponsors = arr(C.sponsors);
+  if(!sponsors.length) {
+    showToast('Ajoutez d\'abord un sponsor avant d\'enregistrer un don','rouge');
+    showPage('sponsors');
+    return;
+  }
   document.getElementById('modal-don-title').textContent='Nouveau Don';
   document.getElementById('d-key').value='';
   document.getElementById('d-date').value=today();
@@ -1325,9 +1360,11 @@ function openNewDon() {
   document.getElementById('d-recu').value='';
   document.getElementById('d-desc').value='';
   const sel=document.getElementById('d-sponsor');
-  sel.innerHTML='<option value="">-- Sélectionner --</option>'+arr(C.sponsors).map(s=>`<option>${s.nom}</option>`).join('');
+  // Utiliser la clé Firebase comme valeur pour une liaison fiable
+  sel.innerHTML='<option value="">-- Sélectionner le sponsor --</option>'+sponsors.map(s=>`<option value="${s._key}" data-nom="${s.nom}">${s.nom}${s.organisation?' ('+s.organisation+')':''}</option>`).join('');
   openModal('modal-don');
 }
+
 function editDon(key) {
   const d=C.dons[key]; if(!d) return;
   document.getElementById('modal-don-title').textContent='Modifier Don';
@@ -1338,24 +1375,37 @@ function editDon(key) {
   document.getElementById('d-desc').value=d.description||'';
   document.getElementById('d-type').value=d.type||'Argent';
   const sel=document.getElementById('d-sponsor');
-  sel.innerHTML='<option value="">-- Sélectionner --</option>'+arr(C.sponsors).map(s=>`<option${s.nom===d.sponsor?' selected':''}>${s.nom}</option>`).join('');
+  const sponsors=arr(C.sponsors);
+  sel.innerHTML='<option value="">-- Sélectionner le sponsor --</option>'+sponsors.map(s=>`<option value="${s._key}" data-nom="${s.nom}" ${s._key===d.sponsor_key||s.nom===d.sponsor?'selected':''}>${s.nom}${s.organisation?' ('+s.organisation+')':''}</option>`).join('');
   openModal('modal-don');
 }
+
 async function saveDon() {
   const montant=parseFloat(document.getElementById('d-montant').value)||0;
-  const sponsor=document.getElementById('d-sponsor').value;
-  if(!sponsor||montant<=0){showToast('Sponsor et montant obligatoires','rouge');return;}
+  const sponsorKey=document.getElementById('d-sponsor').value;
+  const sponsorOpt=document.querySelector('#d-sponsor option:checked');
+  const sponsorNom=sponsorOpt?.getAttribute('data-nom')||sponsorOpt?.text||'';
+  if(!sponsorKey||montant<=0){showToast('Sponsor et montant obligatoires','rouge');return;}
   const btn=document.getElementById('btn-save-don');
   btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; setFbStatus('saving');
   const key=document.getElementById('d-key').value;
-  // Récupérer le token du sponsor pour lier les dons au portail
-  const spObj=arr(C.sponsors).find(s=>s.nom===sponsor);
-  const data={date:document.getElementById('d-date').value,sponsor,sponsor_token:spObj?.token||'',montant,type:document.getElementById('d-type').value,recu:document.getElementById('d-recu').value||'RC-'+Date.now(),description:document.getElementById('d-desc').value};
+  const spObj=C.sponsors[sponsorKey];
+  const data={
+    date:        document.getElementById('d-date').value,
+    sponsor:     sponsorNom,
+    sponsor_key: sponsorKey,
+    sponsor_token: spObj?.token||'',
+    montant,
+    type:        document.getElementById('d-type').value,
+    recu:        document.getElementById('d-recu').value||'RC-'+Date.now(),
+    description: document.getElementById('d-desc').value
+  };
   if(key){ await fbSet(`dons/${key}`,data); C.dons[key]={...data,_key:key}; }
   else { const res=await fbPush('dons',data); if(res?.name){ C.dons[res.name]={...data,_key:res.name}; proposerMemoApresDon(res.name); } }
   btn.innerHTML='💰 Enregistrer'; btn.disabled=false; setFbStatus('online');
-  closeModal('modal-don'); showToast('✓ Don enregistré'); showPage('dons');
+  closeModal('modal-don'); showToast('✓ Don enregistré et lié au sponsor'); showPage('dons');
 }
+
 async function deleteDon(key) {
   if(!confirm('Supprimer ce don ?')) return;
   await fbDelete(`dons/${key}`); delete C.dons[key];
@@ -1904,9 +1954,11 @@ function renderPortailSponsor(token) {
   const p=C.parametres, nomMin=p.nom||'Ministère Tabita';
   document.getElementById('login-screen').style.display='none';
   const nomSponsor=(sp?.nom||'').trim().toLowerCase();
+  const spKey=sp?._key||'';
   const mesDons=arr(C.dons).filter(d=>{
+    if(spKey && d.sponsor_key===spKey) return true;
     if(d.sponsor_token && d.sponsor_token===token) return true;
-    if(!d.sponsor) return false;
+    if(!d.sponsor||!nomSponsor) return false;
     return d.sponsor.trim().toLowerCase()===nomSponsor;
   });
   const totalSp=mesDons.reduce((s,d)=>s+(parseFloat(d.montant)||0),0);
